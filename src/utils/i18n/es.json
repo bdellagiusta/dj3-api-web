@@ -201,7 +201,7 @@
     "One": "Información"
   },
   "AddressBooks": {
-    "One": "Dispositivos"
+    "One": "Libretas de direcciones"
   },
   "System": {
     "One": "Sistema"
@@ -210,7 +210,7 @@
     "One": "Pares"
   },
   "AddressBookManage": {
-    "One": ""
+    "One": "Libretas de direcciones"
   },
   "GroupManage": {
     "One": "Grupos"
@@ -340,7 +340,7 @@
     "One": "Uso excesivo de la clave"
   },
   "Link": {
-    "One": "Link"
+    "One": "Enlace"
   },
   "CopySuccess": {
     "One": "Copia exitosa"
@@ -401,7 +401,7 @@
     "One": "A local"
   },
   "AddressBookName": {
-    "One": "Grupos"
+    "One": "Nombre de la libreta"
   },
   "AddRule": {
     "One": "Agregar regla"
@@ -425,16 +425,16 @@
     "One": "Compartir con"
   },
   "MyAddressBook": {
-    "One": "Dispositivos"
+    "One": "Mi libreta de direcciones"
   },
   "AddressBook": {
-    "One": "Dispositvos"
+    "One": "Libreta de direcciones"
   },
   "AddressBookNameManage": {
-    "One": "Grupos"
+    "One": "Nombre de la libreta"
   },
   "MyAddressBookTips": {
-    "One": "\"Pretermindado\" es la predeterminada del sistema, no puede ser modificada ni eliminada."
+    "One": "\"Mi libreta de direcciones\" es la predeterminada del sistema, no puede ser modificada ni eliminada."
   },
   "LastOnlineIp": {
     "One": "Última IP en línea"
@@ -461,7 +461,7 @@
     "One": "Token del usuario"
   },
   "MyPeer": {
-    "One": "Mis Pares"
+    "One": "Mis pares"
   },
   "BatchAddToAB": {
     "One": "Agregar en bloque a la libreta de direcciones"

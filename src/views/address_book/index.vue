@@ -12,11 +12,20 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="T('AddressBookName')">
+          <el-select v-model="listQuery.collection_id" clearable>
+            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
+            <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="T('Id')">
           <el-input v-model="listQuery.id" clearable></el-input>
         </el-form-item>
         <el-form-item :label="T('Username')">
           <el-input v-model="listQuery.username" clearable></el-input>
+        </el-form-item>
+        <el-form-item :label="T('Hostname')">
+          <el-input v-model="listQuery.hostname" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
@@ -57,14 +66,13 @@
         <el-table-column prop="alias" :label="T('Alias')" align="center" width="150"/>
         <el-table-column prop="peer.version" :label="T('Version')" align="center" width="100"/>
         <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/>
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="250" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="500" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <template v-if="userStore.role === 'admin'">
-              <el-button v-if="appStore.setting.appConfig.web_client" type="success" @click="toWebClientLink(row)">Web Client</el-button>
-              <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-              <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
-            </template>
+            <el-button v-if="appStore.setting.appConfig.web_client" type="success" @click="toWebClientLink(row)">Web Client</el-button>
+            <!--            <el-button type="primary" @click="toShowShare(row)">{{ T('ShareByWebClient') }}</el-button>-->
+            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -138,6 +146,21 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <!-- <el-form-item label="强制中继" prop="forceAlwaysRelay" required>
+                <el-switch v-model="formData.forceAlwaysRelay"></el-switch>
+              </el-form-item>
+         <el-form-item label="在线" prop="online">
+                <el-switch v-model="formData.online"></el-switch>
+              </el-form-item>
+              <el-form-item label="rdp端口" prop="rdpPort">
+                <el-input v-model="formData.rdpPort"></el-input>
+              </el-form-item>
+              <el-form-item label="rdp用户名" prop="rdpUsername">
+                <el-input v-model="formData.rdpUsername"></el-input>
+              </el-form-item>
+              <el-form-item label="同一服务器" prop="sameServer">
+                <el-switch v-model="formData.sameServer"></el-switch>
+              </el-form-item>-->
 
         <el-form-item>
           <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
@@ -145,6 +168,12 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!--    <el-dialog v-model="shareToWebClientVisible" width="900" :close-on-click-modal="false">
+          <shareByWebClient :id="shareToWebClientForm.id"
+                            :hash="shareToWebClientForm.hash"
+                            @cancel="shareToWebClientVisible=false"
+                            @success=""/>
+        </el-dialog>-->
   </div>
 </template>
 
@@ -156,14 +185,12 @@
   import { useRoute } from 'vue-router'
   import { connectByClient } from '@/utils/peer'
   import { useAppStore } from '@/store/app'
-  import { useUserStore } from '@/store/user'
   import { handleClipboard } from '@/utils/clipboard'
   import { CopyDocument } from '@element-plus/icons'
   import PlatformIcons from '@/components/icons/platform.vue'
   import { loadAllUsers } from '@/global'
 
   const appStore = useAppStore()
-  const userStore = useUserStore()
   const route = useRoute()
   const { allUsers, getAllUsers } = loadAllUsers()
 

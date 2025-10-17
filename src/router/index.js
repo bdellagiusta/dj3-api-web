@@ -32,6 +32,22 @@ const constantRoutes = [
   },
 ]
 export const asyncRoutes = [
+  // {
+  //   path: '/',
+  //   name: 'Index',
+  //   redirect: '/Home',
+  //   meta: { title: '首页', icon: 'house' },
+  //   component: () => import('@/layout/index.vue'),
+  //   children: [
+  //     {
+  //       path: '/Home',
+  //       name: 'Home',
+  //       meta: { title: '首页', icon: 'house' },
+  //       component: () => import('@/views/index/index.vue'),
+  //     },
+  //
+  //   ],
+  // },
   {
     path: '/my',
     name: 'My',
@@ -40,16 +56,46 @@ export const asyncRoutes = [
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: 'address_book',
-        name: 'MyAddressBookList',
-        meta: { title: 'AddressBooks', icon: 'Monitor' /*keepAlive: true*/ },
-        component: () => import('@/views/my/address_book/index.vue'),
+        path: '/',
+        name: 'MyInfo',
+        meta: { title: 'Userinfo', icon: 'User' /*keepAlive: true*/ },
+        component: () => import('@/views/my/info.vue'),
+      },
+      {
+        path: 'peer',
+        name: 'MyPeer',
+        meta: { title: 'MyPeer', icon: 'Monitor' /*keepAlive: true*/ },
+        component: () => import('@/views/my/peer/index.vue'),
       },
       {
         path: 'address_book_collection',
         name: 'MyAddressBookCollection',
         meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
         component: () => import('@/views/my/address_book/collection.vue'),
+      },
+      {
+        path: 'address_book',
+        name: 'MyAddressBookList',
+        meta: { title: 'AddressBooks', icon: 'Notebook' /*keepAlive: true*/ },
+        component: () => import('@/views/my/address_book/index.vue'),
+      },
+      {
+        path: 'tag',
+        name: 'MyTagList',
+        meta: { title: 'Tags', icon: 'CollectionTag' /*keepAlive: true*/ },
+        component: () => import('@/views/my/tag/index.vue'),
+      },
+      {
+        path: 'shareRecord',
+        name: 'MyShareRecordList',
+        meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
+        component: () => import('@/views/my/share_record/index.vue'),
+      },
+      {
+        path: 'loginLog',
+        name: 'MyLoginLog',
+        meta: { title: 'LoginLog', icon: 'List' /*keepAlive: true*/ },
+        component: () => import('@/views/my/login_log/index.vue'),
       },
     ],
   },
@@ -143,6 +189,12 @@ export const asyncRoutes = [
         name: 'AuditFile',
         meta: { title: 'AuditFileLog', icon: 'Files' /*keepAlive: true*/ },
         component: () => import('@/views/audit/fileList.vue'),
+      },
+      {
+        path: '/shareRecord',
+        name: 'ShareRecord',
+        meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
+        component: () => import('@/views/share_record/index.vue'),
       },
       {
         path: '/serverCmd',

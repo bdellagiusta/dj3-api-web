@@ -17,5 +17,3 @@ yarn-error.log*
 *.local
 
 yarn.lock
-public/*.exe
-public/*.msi
