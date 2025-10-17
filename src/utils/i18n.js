@@ -1,0 +1,22 @@
+import en from '@/utils/i18n/en.json'
+import es from '@/utils/i18n/es.json'
+
+import { useAppStore } from '@/store/app'
+
+const trans = {
+  'es': es,
+  'en': en,
+}
+export function T (key, params, num = 0) {
+  const appStore = useAppStore()
+  const lang = appStore.setting.lang
+  const tran = trans[lang]?.[key]
+  if (!tran) {
+    return key
+  }
+  const msg = num > 1 ? (tran.Other ? tran.Other : tran.One) : tran.One
+
+  return msg.replace(/{(\w+)}/g, function (match, key) {
+    return params[key] || match
+  })
+}
