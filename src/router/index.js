@@ -32,22 +32,6 @@ const constantRoutes = [
   },
 ]
 export const asyncRoutes = [
-  // {
-  //   path: '/',
-  //   name: 'Index',
-  //   redirect: '/Home',
-  //   meta: { title: '首页', icon: 'house' },
-  //   component: () => import('@/layout/index.vue'),
-  //   children: [
-  //     {
-  //       path: '/Home',
-  //       name: 'Home',
-  //       meta: { title: '首页', icon: 'house' },
-  //       component: () => import('@/views/index/index.vue'),
-  //     },
-  //
-  //   ],
-  // },
   {
     path: '/my',
     name: 'My',
@@ -55,18 +39,49 @@ export const asyncRoutes = [
     meta: { title: 'My', icon: 'UserFilled' },
     component: () => import('@/layout/index.vue'),
     children: [
-      {
-        path: 'peer',
-        name: 'MyPeer',
-        meta: { title: 'MyPeer', icon: 'Monitor' /*keepAlive: true*/ },
-        component: () => import('@/views/my/peer/index.vue'),
-      },
-      {
-        path: 'address_book',
+      // {
+      //   path: '/',
+      //   name: 'MyInfo',
+      //   meta: { title: 'Userinfo', icon: 'User' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/info.vue'),
+      // },
+     {
+        path: '/',
         name: 'MyAddressBookList',
-        meta: { title: 'AddressBooks', icon: 'Notebook' /*keepAlive: true*/ },
+        meta: { title: 'AddressBooks', icon: 'Monitor' /*keepAlive: true*/ },
         component: () => import('@/views/my/address_book/index.vue'),
       },
+      // {
+      //   path: 'peer',
+      //   name: 'MyPeer',
+      //   meta: { title: 'MyPeer', icon: 'Monitor' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/peer/index.vue'),
+      // },
+      {
+        path: 'address_book_collection',
+        name: 'MyAddressBookCollection',
+        meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
+        component: () => import('@/views/my/address_book/collection.vue'),
+      },
+
+      // {
+      //   path: 'tag',
+      //   name: 'MyTagList',
+      //   meta: { title: 'Tags', icon: 'CollectionTag' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/tag/index.vue'),
+      // },
+      // {
+      //   path: 'shareRecord',
+      //   name: 'MyShareRecordList',
+      //   meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/share_record/index.vue'),
+      // },
+      // {
+      //   path: 'loginLog',
+      //   name: 'MyLoginLog',
+      //   meta: { title: 'LoginLog', icon: 'List' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/login_log/index.vue'),
+      // },
     ],
   },
   {

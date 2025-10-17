@@ -11,16 +11,16 @@
     <el-card class="list-body" shadow="hover">
       <el-tag type="danger" effect="light" style="margin-bottom: 10px">{{ T('MyAddressBookTips') }}</el-tag>
       <el-table :data="list" v-loading="listRes.loading" border>
-        <!--        <el-table-column prop="id" label="ID" align="center"/>-->
         <el-table-column prop="name" :label="T('Name')" align="center"/>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
-        <!--        <el-table-column prop="updated_at" label="更新时间" align="center"/>-->
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="600" fixed="right">
           <template #default="{row}">
             <template v-if="row.id>0">
               <el-button type="primary" @click="showRules(row)">{{ T('ShareRules') }}</el-button>
-              <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-              <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+                  <template v-if="listQuery.username === 'admin'">
+        <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
+        <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+      </template>
             </template>
           </template>
         </el-table-column>
