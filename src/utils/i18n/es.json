@@ -340,7 +340,7 @@
     "One": "Uso excesivo de la clave"
   },
   "Link": {
-    "One": "Link"
+    "One": "Conectar"
   },
   "CopySuccess": {
     "One": "Copia exitosa"
@@ -425,7 +425,7 @@
     "One": "Compartir con"
   },
   "MyAddressBook": {
-    "One": "Prederterminado"
+    "One": "Predeterminado"
   },
   "AddressBook": {
     "One": "Dispositvos"
@@ -434,7 +434,7 @@
     "One": "Grupos"
   },
   "MyAddressBookTips": {
-    "One": "\"Pretermindado\" es la predeterminada del sistema, no puede ser modificada ni eliminada."
+    "One": "\"Predeterminado\" es la predeterminada del sistema, no puede ser modificada ni eliminada."
   },
   "LastOnlineIp": {
     "One": "Última IP en línea"
@@ -531,5 +531,8 @@
   },
   "Remark": {
     "One": "Remark"
+  },
+  "Islands": {
+    "One": "Islas"
   }
 }

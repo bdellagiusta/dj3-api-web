@@ -23,16 +23,17 @@ export function useRepositories (api_type = 'my') {
   const listRes = reactive({
     list: [], total: 0, loading: false,
   })
-  const listQuery = reactive({
-    page: 1,
-    page_size: 10,
-    id: null,
-    user_id: null,
-    username: null,
-    hostname: null,
-    collection_id: null,
-    alias: null,
-  })
+const listQuery = reactive({
+  page: 1,
+  page_size: 10,
+  id: null,
+  user_id: null,
+  username: null,
+  hostname: null,
+  collection_id: null,
+  alias: null,
+  tag_id: null,
+})
 
   // const getList = async () => {
   //   listRes.loading = true
@@ -74,18 +75,32 @@ const getList = async () => {
       }
     }
 
-    // AGREGAR FILTRADO POR ALIAS AQUÍ
-    let filteredList = res.data.list
-    if (listQuery.alias && listQuery.alias.trim() !== '') {
-      const searchTerm = listQuery.alias.toLowerCase().trim()
-      filteredList = res.data.list.filter(item => {
-        return item.alias?.toLowerCase().includes(searchTerm)
-      })
-    }
+let filteredList = res.data.list
 
-    listRes.list = filteredList
-    listRes.total = filteredList.length // Actualizar el total
+// 🔍 Filtro por alias
+if (listQuery.alias && listQuery.alias.trim() !== '') {
+  const searchTerm = listQuery.alias.toLowerCase().trim()
+  filteredList = filteredList.filter(item =>
+    item.alias?.toLowerCase().includes(searchTerm)
+  )
+}
+
+if (listQuery.tag_id && listQuery.tag_id !== 0) {
+  filteredList = filteredList.filter(item =>
+    item.tags?.includes(listQuery.tag_id)
+  )
+}
+
+listRes.list = filteredList
+listRes.total = filteredList.length
+console.log('LISTA COMPLETA:', res.data.list.map(i => ({
+  alias: i.alias,
+  id: i.id,
+  tags: i.tags
+})))
+
   }
+
 }
 
 
