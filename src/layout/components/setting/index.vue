@@ -1,21 +1,6 @@
 <template>
   <div class="setting">
     <div class="menu-item">
-      <el-switch
-          v-model="isDark"
-          style="--el-switch-on-color:#18222c"
-      >
-        <template #active-action>
-          <el-icon>
-            <Moon/>
-          </el-icon>
-        </template>
-        <template #inactive-action>
-          <el-icon>
-            <Sunny color="#000"/>
-          </el-icon>
-        </template>
-      </el-switch>
     </div>
     <el-dropdown class="menu-item">
       <div class="title">

@@ -213,7 +213,7 @@
     "One": ""
   },
   "GroupManage": {
-    "One": "Grupos"
+    "One": "Grupos de Usuarios"
   },
   "UserManage": {
     "One": "Usuarios"
@@ -401,7 +401,7 @@
     "One": "A local"
   },
   "AddressBookName": {
-    "One": "Grupos"
+    "One": "Grupo"
   },
   "AddRule": {
     "One": "Agregar regla"
@@ -425,7 +425,7 @@
     "One": "Compartir con"
   },
   "MyAddressBook": {
-    "One": "Dispositivos"
+    "One": "Prederterminado"
   },
   "AddressBook": {
     "One": "Dispositvos"

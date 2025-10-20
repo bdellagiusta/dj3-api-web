@@ -57,12 +57,12 @@ export const asyncRoutes = [
       //   meta: { title: 'MyPeer', icon: 'Monitor' /*keepAlive: true*/ },
       //   component: () => import('@/views/my/peer/index.vue'),
       // },
-      {
-        path: 'address_book_collection',
-        name: 'MyAddressBookCollection',
-        meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
-        component: () => import('@/views/my/address_book/collection.vue'),
-      },
+      // {
+      //   path: 'address_book_collection',
+      //   name: 'MyAddressBookCollection',
+      //   meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/address_book/collection.vue'),
+      // },
 
       // {
       //   path: 'tag',
@@ -103,12 +103,12 @@ export const asyncRoutes = [
         meta: { title: 'GroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
         component: () => import('@/views/group/index.vue'),
       },
-      {
-        path: 'deviceGroup',
-        name: 'DeviceGroup',
-        meta: { title: 'DeviceGroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
-        component: () => import('@/views/group/deviceGroupList.vue'),
-      },
+      // {
+      //   path: 'deviceGroup',
+      //   name: 'DeviceGroup',
+      //   meta: { title: 'DeviceGroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
+      //   component: () => import('@/views/group/deviceGroupList.vue'),
+      // },
       {
         path: 'index',
         name: 'UserList',
@@ -131,7 +131,8 @@ export const asyncRoutes = [
         path: 'addressBookName',
         name: 'UserAddressBookName',
         meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
-        component: () => import('@/views/address_book/collection.vue'),
+        component: () => import('@/views/my/address_book/collection.vue'),
+        // component: () => import('@/views/address_book/collection.vue'),
       },
       {
         path: 'addressBook',

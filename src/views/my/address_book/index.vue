@@ -8,25 +8,26 @@
             <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
           </el-select>
         </el-form-item>
+          <el-form-item :label="T('Name')" >
+          <el-input v-model="listQuery.alias" clearable></el-input>
+        </el-form-item>
         <el-form-item :label="T('Id')">
           <el-input v-model="listQuery.id" clearable></el-input>
         </el-form-item>
-        <el-form-item :label="T('Username')">
-          <el-input v-model="listQuery.username" clearable></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Hostname')">
-          <el-input v-model="listQuery.hostname" clearable></el-input>
-        </el-form-item>
+
+
         <el-form-item>
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
-          <el-button type="primary" @click="showBatchEditTags">{{ T('BatchEditTags') }}</el-button>
+          <el-button v-if="isAdmin" type="danger" @click="toAdd">{{ T('Add') }}</el-button>
+          <el-button v-if="isAdmin" type="primary" @click="showBatchEditTags">{{ T('BatchEditTags') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="list-body" shadow="hover">
+
       <el-table :data="listRes.list" v-loading="listRes.loading" border @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="50" align="center"></el-table-column>
+        <el-table-column prop="alias" :label="T('Name')" align="center"/>
         <el-table-column prop="id" label="ID" align="center" width="200">
           <template #default="{row}">
             <div>
@@ -38,22 +39,19 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
+        <el-table-column  prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
           <template #default="{row}">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{ collectionListRes.list.find(c => c.id === row.collection_id)?.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="username" :label="T('Username')" align="center" width="150"/>
-        <el-table-column prop="hostname" :label="T('Hostname')" align="center" width="150"/>
-        <el-table-column prop="tags" :label="T('Tags')" align="center"/>
-        <el-table-column prop="alias" :label="T('Alias')" align="center" width="150"/>
+        <el-table-column v-if="isAdmin" prop="hostname" :label="T('Hostname')" align="center" width="150"/>
+        <el-table-column v-if="isAdmin" prop="tags" :label="T('Tags')" align="center"  width="150"/>
         <el-table-column prop="peer.version" :label="T('Version')" align="center" width="100"/>
-        <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/>
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="600" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-    <template v-if="listQuery.username === 'admin' || row.username === 'admin'">
+    <template v-if="isAdmin">
         <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
         <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
       </template>
@@ -148,7 +146,7 @@
 </template>
 
 <script setup>
-  import { onActivated, onMounted, reactive, ref, watch } from 'vue'
+  import { onActivated, onMounted, reactive, ref, watch, computed } from 'vue'
   import { useBatchUpdateTagsRepositories, useRepositories } from '@/views/address_book'
   import { toWebClientLink } from '@/utils/webclient'
   import { T } from '@/utils/i18n'
@@ -160,6 +158,7 @@
   import PlatformIcons from '@/components/icons/platform.vue'
 
   const appStore = useAppStore()
+
   const {
     listRes,
     listQuery,
@@ -184,6 +183,18 @@
 
   } = useRepositories('my')
 
+
+  // Obtener información del usuario desde localStorage
+  const userInfo = computed(() => {
+    const userStr = localStorage.getItem('user_info')
+    return userStr ? JSON.parse(userStr) : null
+  })
+
+  const currentUsername = computed(() => userInfo.value?.name || '')
+
+  // Verificar si es admin
+  const isAdmin = computed(() => userInfo.value?.name === 'admin')
+
   onMounted(getCollectionList)
   onMounted(getCollectionListForUpdate)
   onMounted(getList)
@@ -197,10 +208,13 @@
   const shareToWebClientForm = reactive({
     id: '',
     hash: '',
+    alias: '',
+
   })
   const toShowShare = (row) => {
     shareToWebClientForm.id = row.id
     shareToWebClientForm.hash = row.hash
+    shareToWebClientForm.alias = row.alias
     shareToWebClientVisible.value = true
   }
   const {
@@ -218,6 +232,10 @@
       getList()
     }
   }
+  onMounted(() => {
+  console.log('listQuery propiedades:', Object.keys(listQuery))
+  console.log('listQuery completo:', listQuery)
+})
 
   const multipleSelection = ref([])
   const handleSelectionChange = (val) => {
@@ -225,7 +243,6 @@
 
     batchEditTagsFormData.value.row_ids = val.map(v => v.row_id)
   }
-
 
 </script>
 

@@ -31,30 +31,65 @@ export function useRepositories (api_type = 'my') {
     username: null,
     hostname: null,
     collection_id: null,
+    alias: null,
   })
 
-  const getList = async () => {
-    listRes.loading = true
-    const res = await apis[api_type].list(listQuery).catch(_ => false)
-    listRes.loading = false
-    if (res) {
-      const ids = res.data.list.map(item => item.id)
-      if (ids.length) {
-        const peer_data = await simpleData({ ids }).catch(_ => false)
-        if (peer_data) {
-          res.data.list.forEach(item => {
-            const peer = peer_data.data.list.find(peer => peer.id === item.id)
-            if (peer) {
-              item.peer = peer
-            }
-          })
-        }
-      }
+  // const getList = async () => {
+  //   listRes.loading = true
+  //   const res = await apis[api_type].list(listQuery).catch(_ => false)
+  //   listRes.loading = false
+  //   if (res) {
+  //     const ids = res.data.list.map(item => item.id)
+  //     if (ids.length) {
+  //       const peer_data = await simpleData({ ids }).catch(_ => false)
+  //       if (peer_data) {
+  //         res.data.list.forEach(item => {
+  //           const peer = peer_data.data.list.find(peer => peer.id === item.id)
+  //           if (peer) {
+  //             item.peer = peer
+  //           }
+  //         })
+  //       }
+  //     }
 
-      listRes.list = res.data.list
-      listRes.total = res.data.total
+  //     listRes.list = res.data.list
+  //     listRes.total = res.data.total
+  //   }
+  // }
+const getList = async () => {
+  listRes.loading = true
+  const res = await apis[api_type].list(listQuery).catch(_ => false)
+  listRes.loading = false
+  if (res) {
+    const ids = res.data.list.map(item => item.id)
+    if (ids.length) {
+      const peer_data = await simpleData({ ids }).catch(_ => false)
+      if (peer_data) {
+        res.data.list.forEach(item => {
+          const peer = peer_data.data.list.find(peer => peer.id === item.id)
+          if (peer) {
+            item.peer = peer
+          }
+        })
+      }
     }
+
+    // AGREGAR FILTRADO POR ALIAS AQUÍ
+    let filteredList = res.data.list
+    if (listQuery.alias && listQuery.alias.trim() !== '') {
+      const searchTerm = listQuery.alias.toLowerCase().trim()
+      filteredList = res.data.list.filter(item => {
+        return item.alias?.toLowerCase().includes(searchTerm)
+      })
+    }
+
+    listRes.list = filteredList
+    listRes.total = filteredList.length // Actualizar el total
   }
+}
+
+
+
   const handlerQuery = () => {
     if (listQuery.page === 1) {
       getList()
@@ -135,7 +170,6 @@ export function useRepositories (api_type = 'my') {
   }
   const toAdd = () => {
     formVisible.value = true
-    //重置formData
     formData.row_id = 0
     formData.alias = ''
     formData.forceAlwaysRelay = false

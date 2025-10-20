@@ -107,12 +107,6 @@
         <el-form-item :label="T('Hostname')" prop="hostname">
           <el-input v-model="formData.hostname"></el-input>
         </el-form-item>
-        <!--        <el-form-item :label="T('LoginName')" prop="loginName">
-                  <el-input v-model="formData.loginName"></el-input>
-                </el-form-item>
-                <el-form-item :label="T('Password')" prop="password">
-                  <el-input v-model="formData.password"></el-input>
-                </el-form-item>-->
         <el-form-item :label="T('Platform')" prop="platform">
           <el-select v-model="formData.platform">
             <el-option
