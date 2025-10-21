@@ -35,7 +35,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
-        <!--        <el-table-column prop="updated_at" label="更新时间" align="center"/>-->
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="300" fixed="right">
           <template #default="{row}">
             <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
@@ -73,7 +72,6 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="T('ShareTo')" prop="g_id" required>
-          <!--          <el-input-number v-model="formData.to_id"></el-input-number>-->
           <div style="width: 30%">
             <el-select v-model="formData.g_id" @change="changeGId">
               <el-option

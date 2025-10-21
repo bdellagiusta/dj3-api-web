@@ -6,7 +6,7 @@
         <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
       </el-select>
       <div class="aside-tags">
-        <div class="top" style="width: 100%">标签</div>
+        <div class="top" style="width: 100%">Etiqueta</div>
         <div v-for="t in tagListRes.list"
              :key="t.id" class="tag"
              :class="{checked: checkedTags.includes(t.name)}"
@@ -82,18 +82,10 @@
         <el-form-item label="ID" prop="id" required>
           <el-input v-model="formData.id"></el-input>
         </el-form-item>
-        <el-form-item :label="T('Username')" prop="username">
-          <el-input v-model="formData.username"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Alias')" prop="alias">
+        <el-form-item :label="T('Name')" prop="alias">
           <el-input v-model="formData.alias"></el-input>
         </el-form-item>
-        <el-form-item :label="T('Hash')" prop="hash">
-          <el-input v-model="formData.hash"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Hostname')" prop="hostname">
-          <el-input v-model="formData.hostname"></el-input>
-        </el-form-item>
+
         <el-form-item :label="T('Platform')" prop="platform">
           <el-select v-model="formData.platform">
             <el-option
@@ -119,6 +111,8 @@
         <el-form-item>
           <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
           <el-button @click="submit" type="primary">{{ T('Submit') }}</el-button>
+         <el-button @click="submit" type="primary">{{ T('Submit') }}</el-button>
+
         </el-form-item>
       </el-form>
     </el-dialog>

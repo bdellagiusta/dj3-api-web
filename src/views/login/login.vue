@@ -54,7 +54,7 @@
   const userStore = useUserStore()
   const route = useRoute()
   const router = useRouter()
-  const options = reactive([]) // 存储 OIDC 登录选项
+  const options = reactive([])
 
   let platform = window.navigator.platform
   if (navigator.platform.indexOf('Mac') === 0) {
@@ -131,9 +131,8 @@
     try {
       const res = await loginOptions().catch(_ => false)
       if (!res || !res.data) return console.error('No valid response received')
-      res.data.ops.map(option => (options.push({ name: option }))) // 创建新的对象数组
+      res.data.ops.map(option => (options.push({ name: option })))
       if (res.data.auto_oidc) {
-        // 如果有自动OIDC登录选项，直接调用第一个
         handleOIDCLogin(res.data.ops[0])
       }
       disablePwd.value = res.data.disable_pwd
@@ -149,17 +148,14 @@
   onMounted(async () => {
     const code = getCode()
     if (code) {
-      // 如果code存在，进行query获取user info
       const res = await userStore.query(code)
       if (res) {
-        // 删除code，确保跳转之前对code进行清楚
         removeCode()
         ElMessage.success(T('LoginSuccess'))
         router.push({ path: redirect || '/', replace: true })
       }
     } else {
-      // 如果code不存在, 现实登陆页面
-      loadLoginOptions() // 组件挂载后调用登录选项加载函数
+      loadLoginOptions() 
     }
   })
 

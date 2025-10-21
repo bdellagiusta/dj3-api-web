@@ -10,10 +10,10 @@
     name: 'Home',
     setup () {
       const todoList = ref([
-        {title:'修复bug'},
-        {title:'修复bug'},
-        {title:'修复bug'},
-        {title:'增加新功能'},
+{ title: 'Corrección de errores' },
+{ title: 'Corrección de errores' },
+{ title: 'Corrección de errores' },
+{ title: 'Añadir nueva función' },
       ])
       return {
         todoList

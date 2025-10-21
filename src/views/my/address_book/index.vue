@@ -57,8 +57,9 @@
             <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
           </template>
         </el-table-column> -->
-        <el-table-column v-if="isAdmin" prop="hostname" :label="T('Hostname')" align="center" width="250" />
-        <el-table-column prop="tags" :label="T('Island')" align="center" width="250" />
+        <el-table-column v-if="isAdmin" prop="platform" :label="T('Platform')" align="center" width="250" />
+        <el-table-column prop="tags" v-if="!isAdmin" :label="T('Island')" align="center" width="250" />
+          <el-table-column prop="tags" v-if="isAdmin" :label="T('Tags')" align="center" width="250" />
         <!-- <el-table-column v-if="isAdmin" prop="peer.version" :label="T('Version')" align="center" width="100" /> -->
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" fixed="right" width="300" >
           <template #default="{ row }" >
@@ -86,36 +87,27 @@
 </el-card>
     <el-dialog v-model="formVisible" width="800" :title="!formData.row_id ? T('Create') : T('Update')">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
-        <el-form-item :label="T('AddressBookName')" required prop="collection_id">
-          <el-select v-model="formData.collection_id" clearable @change="changeCollectionForUpdate">
-            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
-            <el-option v-for="c in collectionListResForUpdate.list" :key="c.id" :label="c.name"
-              :value="c.id"></el-option>
-          </el-select>
-        </el-form-item>
+
         <el-form-item label="ID" prop="id" required>
           <el-input v-model="formData.id"></el-input>
         </el-form-item>
-        <el-form-item :label="T('Username')" prop="username">
-          <el-input v-model="formData.username"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Alias')" prop="alias">
+        <el-form-item :label="T('Name')" prop="alias">
           <el-input v-model="formData.alias"></el-input>
         </el-form-item>
-        <el-form-item :label="T('Hash')" prop="hash">
-          <el-input v-model="formData.hash"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Hostname')" prop="hostname">
-          <el-input v-model="formData.hostname"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Platform')" prop="platform">
+        <el-form-item  v-if="isAdmin"  :label="T('Platform')" prop="platform">
           <el-select v-model="formData.platform">
             <el-option v-for="item in platformList" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="T('Tags')" prop="tags">
+        <el-form-item v-if="!isAdmin" :label="T('Island')" prop="tags">
+          <el-select v-model="formData.tags" multiple>
+            <el-option v-for="item in tagListRes.list" :key="item.name" :label="item.name"
+              :value="item.name"></el-option>
+          </el-select>
+        </el-form-item>
+          <el-form-item v-if="isAdmin" :label="T('Tags')" prop="tags">
           <el-select v-model="formData.tags" multiple>
             <el-option v-for="item in tagListRes.list" :key="item.name" :label="item.name"
               :value="item.name"></el-option>
@@ -124,6 +116,7 @@
         <el-form-item>
           <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
           <el-button @click="submit" type="primary">{{ T('Submit') }}</el-button>
+          
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -151,7 +144,6 @@
 <script setup>
 import { onActivated, onMounted, reactive, ref, watch, computed } from 'vue'
 import { useBatchUpdateTagsRepositories, useRepositories } from '@/views/address_book'
-import { toWebClientLink } from '@/utils/webclient'
 import { T } from '@/utils/i18n'
 import shareByWebClient from '@/views/address_book/components/shareByWebClient.vue'
 import { useAppStore } from '@/store/app'
@@ -183,7 +175,6 @@ const {
   changeCollectionForUpdate,
   getCollectionListForUpdate,
   collectionListResForUpdate,
-  // collectionListQuery,
 
 } = useRepositories('my')
 

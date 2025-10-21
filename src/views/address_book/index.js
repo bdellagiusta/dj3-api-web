@@ -39,7 +39,6 @@ const listQuery = reactive({
 const getList = async () => {
   listRes.loading = true
   
-  // Traer todos los datos (o implementa paginación en backend)
   const res = await apis[api_type].list({ 
     page: 1, 
     page_size: 9999 
@@ -61,10 +60,8 @@ const getList = async () => {
       }
     }
 
-    // 🔍 Aplicar TODOS los filtros
     let filteredList = res.data.list
 
-    // Filtro por ALIAS (nombre)
     if (listQuery.alias && listQuery.alias.trim() !== '') {
       const searchTerm = listQuery.alias.toLowerCase().trim()
       filteredList = filteredList.filter(item =>
@@ -72,14 +69,12 @@ const getList = async () => {
       )
     }
 
-    // Filtro por TAG (isla)
     if (listQuery.tag_id && listQuery.tag_id.trim() !== '') {
       filteredList = filteredList.filter(item =>
         item.tags?.includes(listQuery.tag_id)
       )
     }
 
-    // Filtro por ID
     if (listQuery.id && listQuery.id.trim() !== '') {
       const searchId = listQuery.id.toLowerCase().trim()
       filteredList = filteredList.filter(item =>
@@ -87,7 +82,6 @@ const getList = async () => {
       )
     }
 
-    // ✅ Paginar manualmente DESPUÉS de filtrar
     const start = (listQuery.page - 1) * listQuery.page_size
     const end = start + listQuery.page_size
     
@@ -104,7 +98,7 @@ const getList = async () => {
   }
 }
 const handlerQuery = () => {
-  listQuery.page = 1 // ✅ Resetear a página 1 al filtrar
+  listQuery.page = 1
   getList()
 }
 
@@ -125,7 +119,6 @@ const handlerQuery = () => {
     }
   }
 
-  //创建或者修改
   const platformList = [
     { label: 'Windows', value: 'Windows', icon: 'windows' },
     { label: 'Linux', value: 'Linux', icon: 'linux' },
@@ -168,7 +161,6 @@ const handlerQuery = () => {
 
   const toEdit = (row) => {
     formVisible.value = true
-    //将row中的数据赋值给formData
     Object.keys(formData).forEach(key => {
       formData[key] = row[key]
     })
