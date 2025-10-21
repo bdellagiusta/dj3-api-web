@@ -16,8 +16,8 @@
       <el-table :data="listRes.list" v-loading="listRes.loading" border>
         <el-table-column prop="id" label="ID" align="center"></el-table-column>
         <el-table-column prop="username" :label="T('Username')" align="center"/>
-        <el-table-column prop="email" :label="T('Email')" align="center"/>
-        <el-table-column prop="nickname" :label="T('Nickname')" align="center"/>
+        <!-- <el-table-column prop="email" :label="T('Email')" align="center"/> -->
+        <!-- <el-table-column prop="nickname" :label="T('Nickname')" align="center"/> -->
         <el-table-column :label="T('Group')" align="center">
           <template #default="{row}">
             <span v-if="row.group_id"> <el-tag>{{ listRes.groups?.find(g => g.id === row.group_id)?.name }} </el-tag> </span>
@@ -36,10 +36,10 @@
         <el-table-column prop="remark" :label="T('Remark')" align="center"/>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center"/>
-        <el-table-column :label="T('Actions')" align="center" width="650">
+        <el-table-column :label="T('Actions')" align="center" width="450">
           <template #default="{row}">
-            <el-button @click="toTag(row)">{{ T('UserTags') }}</el-button>
-            <el-button @click="toAddressBook(row)">{{ T('UserAddressBook') }}</el-button>
+            <!-- <el-button @click="toTag(row)">{{ T('UserTags') }}</el-button> -->
+            <!-- <el-button @click="toAddressBook(row)">{{ T('UserAddressBook') }}</el-button> -->
             <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
             <el-button type="warning" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
             <el-button type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>

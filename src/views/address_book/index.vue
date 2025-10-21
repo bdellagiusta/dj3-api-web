@@ -26,6 +26,7 @@
     </el-card>
     <el-card class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border>
+        <el-table-column prop="alias" :label="T('Name')" align="center"/>
         <el-table-column prop="id" label="ID" align="center" width="200">
           <template #default="{row}">
             <div>
@@ -42,25 +43,22 @@
             <span v-if="row.user_id"> <el-tag>{{ allUsers?.find(u => u.id === row.user_id)?.username }}</el-tag> </span>
           </template>
         </el-table-column>
-        <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
+        <!-- <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
           <template #default="{row}">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{ row.collection?.name }}</span>
           </template>
-        </el-table-column>
-        <el-table-column prop="username" :label="T('Username')" align="center" width="150"/>
-        <el-table-column prop="hostname" :label="T('Hostname')" align="center" width="150"/>
-        <el-table-column prop="tags" :label="T('Tags')" align="center"/>
-        <el-table-column prop="alias" :label="T('Alias')" align="center" width="150"/>
-        <el-table-column prop="peer.version" :label="T('Version')" align="center" width="100"/>
-        <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/>
+        </el-table-column> -->
+        <!-- <el-table-column prop="username" :label="T('Username')" align="center" width="150"/> -->
+        <!-- <el-table-column prop="hostname" :label="T('Hostname')" align="center" width="200"/> -->
+        <el-table-column prop="tags" :label="T('Island')" align="center" width="250"/>
+        <el-table-column prop="peer.version" :label="T('Version')" align="center" width="150"/>
+        <!-- <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/> -->
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="250" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <template v-if="userStore.role === 'admin'">
               <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
               <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
-            </template>
           </template>
         </el-table-column>
       </el-table>

@@ -1,17 +1,14 @@
 <template>
-  <el-icon class="ex-icon" @click="expandOrFoldSlider">
-    <el-icon-expand v-if="setting.sideIsCollapse"></el-icon-expand>
-    <el-icon-fold v-else></el-icon-fold>
-  </el-icon>
   <div class="header-logo">
     <img :src="setting.logo" alt="" class="logo">
-    <div class="title">{{setting.title}}</div>
+    <div class="title">DJ3 Networks</div>
   </div>
   <Setting></Setting>
 </template>
 
 <script>
   import { defineComponent, computed } from 'vue'
+  import { storeToRefs } from 'pinia'  
   import HeaderMenu from '@/layout/components/menu/index.vue'
   import Setting from '@/layout/components/setting/index.vue'
   import { useAppStore } from '@/store/app'
@@ -25,7 +22,8 @@
     watch: {},
     setup (props) {
       const appStore = useAppStore()
-      const setting = computed(() => appStore.setting)
+      const { setting } = storeToRefs(appStore) 
+      
       const expandOrFoldSlider = () => {
         appStore.sideCollapse()
       }
@@ -64,9 +62,4 @@
       height: 30px;
     }
   }
-
-
-</style>
-<style lang="scss">
-
 </style>

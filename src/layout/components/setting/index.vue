@@ -45,7 +45,6 @@
   import { ref } from 'vue'
   import { T } from '@/utils/i18n'
   import { useDark } from '@vueuse/core'
-  import { Sunny, Moon } from '@element-plus/icons'
 
   const userStore = useUserStore()
   const user = userStore

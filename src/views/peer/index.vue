@@ -5,10 +5,10 @@
         <el-form-item label="ID">
           <el-input v-model="listQuery.id" clearable/>
         </el-form-item>
-        <el-form-item :label="T('Hostname')">
+        <el-form-item :label="T('Hostname')" label-width="120px">
           <el-input v-model="listQuery.hostname" clearable/>
         </el-form-item>
-        <el-form-item :label="T('LastOnlineTime')" label-width="100px">
+        <el-form-item :label="T('LastOnlineTime')" label-width="150px">
           <el-select v-model="listQuery.time_ago" clearable>
             <el-option
                 v-for="item in timeFilters"
@@ -19,13 +19,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="T('Username')">
+        <el-form-item :label="T('Username')" label-width="120px">
           <el-input v-model="listQuery.username" clearable/>
         </el-form-item>
-        <el-form-item label="IP">
+        <el-form-item label="IP" label-width="80px">
           <el-input v-model="listQuery.ip" clearable/>
         </el-form-item>
-        <el-form-item>
+        <el-form-item > 
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
           <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
           <el-button type="success" @click="toExport">{{ T('Export') }}</el-button>
@@ -62,10 +62,10 @@
       </el-form>
     </el-card>
     <el-card class="list-body" shadow="hover">
-      <div style="text-align: right; margin-bottom: 10px">
+      <!-- <div style="text-align: right; margin-bottom: 10px">
         <el-button :icon="Setting" @click="showColumnSetting"></el-button>
       </div>
-
+ -->
       <el-table :data="listRes.list" v-loading="listRes.loading" border size="small" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
         <template v-for="c in visibleColumns.filter(cc => cc.visible)" :key="c">
@@ -103,7 +103,6 @@
         <el-table-column :label="T('Actions')" align="center" width="500" class-name="table-actions" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <el-button v-if="appStore.setting.appConfig.web_client" type="success" @click="toWebClientLink(row)">Web Client</el-button>
             <el-button type="primary" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
             <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
             <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
@@ -339,14 +338,12 @@
 
   const toEdit = (row) => {
     formVisible.value = true
-    //将row中的数据赋值给formData
     Object.keys(formData).forEach(key => {
       formData[key] = row[key]
     })
   }
   const toAdd = () => {
     formVisible.value = true
-    //重置formData
     formData.row_id = 0
     formData.cpu = ''
     formData.hostname = ''
@@ -382,7 +379,6 @@
     { text: T('HoursAgo', { param: 1 }, 1), value: 3600 },
     { text: T('DaysAgo', { param: 1 }, 1), value: 86400 },
     { text: T('MonthsAgo', { param: 1 }, 1), value: 2592000 },
-    // { text: T('YearsAgo', { param: 1 }, 1), value: 31536000 },
   ])
 
   const toExport = async () => {
@@ -409,20 +405,17 @@
     reader.onload = async (e) => {
       const data = e.target.result
       console.log(data)
-      //组装数据
       const rows = data.split('\n')
       const keys = rows[0].split(',')
       console.log(keys, rows.slice(1).map(row => row.split(',')))
       const values = rows.slice(1).map(row => {
         const obj = {}
         row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).forEach((v, i) => {
-          //去掉两边的"
           obj[keys[i]] = v.trim().replace(/^"|"$/g, '')
         })
         return obj
       }).filter(item => item.id)
-      // console.log(values)
-      //移除不需要的key
+
       values.forEach(item => {
         item.group_id = parseInt(item.group_id)
         Object.keys(item).forEach(key => {
@@ -447,7 +440,7 @@
     return false
   }
   const toImport = () => {
-    ElMessage.warning('暂未实现')
+    ElMessage.warning('Aún no implementado')
   }
 
   const ABFormVisible = ref(false)
@@ -523,7 +516,6 @@
       batchABFormVisible.value = false
     }
   }
-  // 批量添加到地址簿 end
 
   const columnSettingVisible = ref(false)
   const allColumns = ref([

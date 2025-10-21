@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-
 const constantRoutes = [
   {
     path: '/login',
@@ -127,13 +126,13 @@ export const asyncRoutes = [
         meta: { title: 'UserEdit', hide: true },
         component: () => import('@/views/user/edit.vue'),
       },
-      {
-        path: 'addressBookName',
-        name: 'UserAddressBookName',
-        meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
-        component: () => import('@/views/my/address_book/collection.vue'),
-        // component: () => import('@/views/address_book/collection.vue'),
-      },
+      // {
+      //   path: 'addressBookName',
+      //   name: 'UserAddressBookName',
+      //   meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/address_book/collection.vue'),
+      //   //component: () => import('@/views/address_book/collection.vue'),
+      // },
       {
         path: 'addressBook',
         name: 'UserAddressBook',
@@ -199,4 +198,3 @@ export const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRoutes,
 })
-

@@ -5,15 +5,16 @@ import es from 'element-plus/es/locale/lang/es'
 import { admin, app, server } from '@/api/config'
 
 const langs = {
-  'en': { name: 'English', value: en, sideBarWidth: '230px' },
+  'en': { name: 'English', value: en, sideBarWidth: '280px' },
   'es': { name: 'Español', value: es, sideBarWidth: '280px' },
 }
-const defaultLang = localStorage.getItem('lang') || navigator.language || 'es-ES'
-export const useAppStore = defineStore({
-  id: 'App',
+let defaultLang = localStorage.getItem('lang') || navigator.language || 'es'
+defaultLang = defaultLang.startsWith('es') ? 'es' : 'en'
+
+export const useAppStore = defineStore('App', {
   state: () => ({
     setting: {
-      title: 'DJ3 Server',
+      title: 'DJ3 Networks',
       hello: '',
       sideIsCollapse: false,
       logo,
@@ -59,12 +60,12 @@ export const useAppStore = defineStore({
     getAdminConfig () {
       console.log('getAdminConfig')
       return admin().then(res => {
-        this.replaceAdminTitle(res.data.title)
+        this.replaceAdminTitle('DJ3 Networks')
         this.setting.hello = res.data.hello
       })
     },
     replaceAdminTitle (newTitle) {
-      document.title = document.title.replace(`- ${this.setting.title}`, `- ${newTitle}`)
+      document.title = newTitle
       this.setting.title = newTitle
     },
     async loadRustdeskConfig () {
@@ -77,7 +78,6 @@ export const useAppStore = defineStore({
         localStorage.setItem(`${prefix}key`, res.data.key)
         localStorage.setItem(`${prefix}api-server`, res.data.api_server)
       }
-
     },
   },
 })

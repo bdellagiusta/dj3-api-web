@@ -12,7 +12,7 @@
     "One": "Confirmar"
   },
   "Username": {
-    "One": "Nombre de usuario"
+    "One": "Nombre"
   },
   "Password": {
     "One": "Contraseña"
@@ -534,5 +534,14 @@
   },
   "Islands": {
     "One": "Islas"
+  },
+  "Island": {
+    "One": "Isla"
+  },
+  "DJ3 Server": {
+    "One": "Servidor DJ3"
+  },
+  "Select island": {
+    "One": "Seleccionar isla"
   }
 }

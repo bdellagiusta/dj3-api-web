@@ -1,7 +1,8 @@
 <template>
   <el-config-provider :locale="appStore.setting.locale.value">
     <el-container :style="{'--sideBarWidth': sideBarWidth}">
-      <el-aside :width="leftWidth" class="app-left">
+      
+      <el-aside v-if="isAdmin" class="app-left">
         <g-aside></g-aside>
       </el-aside>
       <el-container class="app-container ">
@@ -13,6 +14,7 @@
         </div>
 
         <el-main class="app-main">
+
           <router-view v-slot="{ Component }">
             <transition mode="out-in" name="el-fade-in-linear">
               <keep-alive :include="cachedTags">
@@ -20,6 +22,7 @@
               </keep-alive>
             </transition>
           </router-view>
+      
         </el-main>
       </el-container>
     </el-container>
@@ -35,13 +38,25 @@
   import GHeader from '@/layout/components/header.vue'
 
   const appStore = useAppStore()
-  const tagStore = useTagsStore()
   const sideBarWidth = computed(() => appStore.setting.locale.sideBarWidth)
-  const leftWidth = computed(() => appStore.setting.sideIsCollapse ? '34px' : 'var(--sideBarWidth)')
-
+  
+  const tagStore = useTagsStore()
   const cachedTags = ref([])
-
   cachedTags.value = tagStore.cached
+
+// Obtener información del usuario desde localStorage
+const userInfo = computed(() => {
+  const userStr = localStorage.getItem('user_info')
+  return userStr ? JSON.parse(userStr) : null
+})
+
+const currentUsername = computed(() => userInfo.value?.name || '')
+
+// Verificar si es admin
+const isAdmin = computed(() => userInfo.value?.name === 'admin')
+
+console.log('Current User:', currentUsername.value)
+console.log('Is Admin:', isAdmin.value)
 </script>
 
 <style lang="scss" scoped>
@@ -59,9 +74,7 @@
   padding: 0;
 }
 
-.app-left {
-  transition: width 0.5s;
-}
+
 
 .app-container {
   min-height: 100vh;

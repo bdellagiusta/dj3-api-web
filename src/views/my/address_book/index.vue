@@ -6,18 +6,22 @@
         <el-form-item :label="T('Name')">
           <el-input v-model="listQuery.alias" clearable></el-input>
         </el-form-item>
-        <el-form-item v-if="isAdmin" :label="T('AddressBookName')">
+        <!-- <el-form-item v-if="isAdmin" :label="T('AddressBookName')">
           <el-select v-model="listQuery.collection_id" clearable>
             <el-option :value="0" :label="T('MyAddressBook')"></el-option>
             <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-form-item :label="T('Islands')">
-          <el-select v-model="listQuery.tag_id" clearable filterable placeholder="Seleccionar isla">
-            <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
-          </el-select>
-        </el-form-item>
+    <el-form-item :label="T('Islands')">
+  <el-select 
+    v-model="listQuery.tag_id" 
+    clearable 
+    filterable 
+    :placeholder="T('Select island')">
+    <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
+  </el-select>
+</el-form-item>
 
         <el-form-item :label="T('Id')">
           <el-input v-model="listQuery.id" clearable></el-input>
@@ -33,9 +37,9 @@
     <el-card class="list-body" shadow="hover">
 
       <el-table :data="listRes.list" v-loading="listRes.loading" border @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="50" align="center"></el-table-column>
+        <el-table-column v-if="isAdmin" type="selection" width="50" align="center"></el-table-column>
         <el-table-column prop="alias" :label="T('Name')" align="center" />
-        <el-table-column prop="id" label="ID" align="center" width="200">
+        <el-table-column prop="id" label="ID" align="center" width="250">
           <template #default="{ row }">
             <div>
               <PlatformIcons :name="platformList.find(p => p.label === row.platform)?.icon"
@@ -47,17 +51,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-if="isAdmin" prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
+        <!-- <el-table-column v-if="isAdmin" prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
           <template #default="{ row }">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
           </template>
-        </el-table-column>
-        <el-table-column v-if="isAdmin" prop="hostname" :label="T('Hostname')" align="center" width="150" />
-        <el-table-column prop="tags" :label="T('Islands')" align="center" width="150" />
-        <el-table-column v-if="isAdmin" prop="peer.version" :label="T('Version')" align="center" width="100" />
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" fixed="right">
-          <template #default="{ row }">
+        </el-table-column> -->
+        <el-table-column v-if="isAdmin" prop="hostname" :label="T('Hostname')" align="center" width="250" />
+        <el-table-column prop="tags" :label="T('Island')" align="center" width="250" />
+        <!-- <el-table-column v-if="isAdmin" prop="peer.version" :label="T('Version')" align="center" width="100" /> -->
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" fixed="right" width="300" >
+          <template #default="{ row }" >
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
             <template v-if="isAdmin">
               <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>

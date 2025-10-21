@@ -1,4 +1,5 @@
 <template>
+  <!--
   <el-tag v-for="(t, i) in tags"
           :key="t.name"
           class="tag"
@@ -9,6 +10,7 @@
           :effect="t.active?'dark':'plain'">
     {{ T(t.title) }}
   </el-tag>
+  -->
 </template>
 
 <script>
