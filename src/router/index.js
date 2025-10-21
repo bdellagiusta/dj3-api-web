@@ -96,6 +96,24 @@ export const asyncRoutes = [
         meta: { title: 'PeerManage', icon: 'Monitor' /*keepAlive: true*/ },
         component: () => import('@/views/peer/index.vue'),
       },
+            {
+        path: 'addressBook',
+        name: 'UserAddressBook',
+        meta: { title: 'AddressBookManage', icon: 'Monitor' /*keepAlive: true*/ },
+        component: () => import('@/views/address_book/index.vue'),
+      },
+            {
+        path: 'tag',
+        name: 'UserTag',
+        meta: { title: 'TagsManage', icon: 'CollectionTag' /*keepAlive: true*/ },
+        component: () => import('@/views/tag/index.vue'),
+      },
+            {
+        path: 'index',
+        name: 'UserList',
+        meta: { title: 'UserManage', icon: 'User' /*keepAlive: true*/ },
+        component: () => import('@/views/user/index.vue'),
+      },
       {
         path: 'group',
         name: 'UserGroup',
@@ -108,12 +126,7 @@ export const asyncRoutes = [
       //   meta: { title: 'DeviceGroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
       //   component: () => import('@/views/group/deviceGroupList.vue'),
       // },
-      {
-        path: 'index',
-        name: 'UserList',
-        meta: { title: 'UserManage', icon: 'User' /*keepAlive: true*/ },
-        component: () => import('@/views/user/index.vue'),
-      },
+
       {
         path: 'add',
         name: 'UserAdd',
@@ -133,18 +146,8 @@ export const asyncRoutes = [
       //   component: () => import('@/views/my/address_book/collection.vue'),
       //   //component: () => import('@/views/address_book/collection.vue'),
       // },
-      {
-        path: 'addressBook',
-        name: 'UserAddressBook',
-        meta: { title: 'AddressBookManage', icon: 'Notebook' /*keepAlive: true*/ },
-        component: () => import('@/views/address_book/index.vue'),
-      },
-      {
-        path: 'tag',
-        name: 'UserTag',
-        meta: { title: 'TagsManage', icon: 'CollectionTag' /*keepAlive: true*/ },
-        component: () => import('@/views/tag/index.vue'),
-      },
+
+
       {
         path: '/oauth',
         name: 'Oauth',

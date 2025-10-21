@@ -52,9 +52,9 @@
         <!-- <el-table-column prop="username" :label="T('Username')" align="center" width="150"/> -->
         <!-- <el-table-column prop="hostname" :label="T('Hostname')" align="center" width="200"/> -->
         <el-table-column prop="tags" :label="T('Island')" align="center" width="250"/>
-        <el-table-column prop="peer.version" :label="T('Version')" align="center" width="150"/>
+        <!-- <el-table-column prop="peer.version" :label="T('Version')" align="center" width="150"/> -->
         <!-- <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/> -->
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="250" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
               <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>

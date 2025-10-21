@@ -275,7 +275,7 @@
     "One": "Export"
   },
   "AddToAddressBook": {
-    "One": "Add to address book"
+    "One": "Add to Devices"
   },
   "BatchDelete": {
     "One": "Batch delete"
@@ -464,7 +464,7 @@
     "One": "My peers"
   },
   "BatchAddToAB": {
-    "One": "Batch add to address book"
+    "One": "Batch add to Devices"
   },
   "BatchEditTags": {
     "One": "Batch edit tags"

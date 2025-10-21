@@ -153,7 +153,7 @@
     "One": "Etiquetas de usuario"
   },
   "UserAddressBook": {
-    "One": "Libreta de direcciones de usuario"
+    "One": "Dispositvos"
   },
   "IsAdmin": {
     "One": "Es administrador"
@@ -275,7 +275,7 @@
     "One": "Exportar"
   },
   "AddToAddressBook": {
-    "One": "Agregar a la libreta de direcciones"
+    "One": "Agregar a Dispositivos"
   },
   "BatchDelete": {
     "One": "Eliminar por lotes"
@@ -464,7 +464,7 @@
     "One": "Mis Pares"
   },
   "BatchAddToAB": {
-    "One": "Agregar en bloque a la libreta de direcciones"
+    "One": "Agregar en bloque a Dispositivos"
   },
   "BatchEditTags": {
     "One": "Editar etiquetas en bloque"

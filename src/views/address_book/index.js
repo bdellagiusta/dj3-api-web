@@ -35,32 +35,18 @@ const listQuery = reactive({
   tag_id: null,
 })
 
-  // const getList = async () => {
-  //   listRes.loading = true
-  //   const res = await apis[api_type].list(listQuery).catch(_ => false)
-  //   listRes.loading = false
-  //   if (res) {
-  //     const ids = res.data.list.map(item => item.id)
-  //     if (ids.length) {
-  //       const peer_data = await simpleData({ ids }).catch(_ => false)
-  //       if (peer_data) {
-  //         res.data.list.forEach(item => {
-  //           const peer = peer_data.data.list.find(peer => peer.id === item.id)
-  //           if (peer) {
-  //             item.peer = peer
-  //           }
-  //         })
-  //       }
-  //     }
-
-  //     listRes.list = res.data.list
-  //     listRes.total = res.data.total
-  //   }
-  // }
+ 
 const getList = async () => {
   listRes.loading = true
-  const res = await apis[api_type].list(listQuery).catch(_ => false)
+  
+  // Traer todos los datos (o implementa paginación en backend)
+  const res = await apis[api_type].list({ 
+    page: 1, 
+    page_size: 9999 
+  }).catch(_ => false)
+  
   listRes.loading = false
+  
   if (res) {
     const ids = res.data.list.map(item => item.id)
     if (ids.length) {
@@ -75,43 +61,52 @@ const getList = async () => {
       }
     }
 
-let filteredList = res.data.list
+    // 🔍 Aplicar TODOS los filtros
+    let filteredList = res.data.list
 
-// 🔍 Filtro por alias
-if (listQuery.alias && listQuery.alias.trim() !== '') {
-  const searchTerm = listQuery.alias.toLowerCase().trim()
-  filteredList = filteredList.filter(item =>
-    item.alias?.toLowerCase().includes(searchTerm)
-  )
-}
-
-if (listQuery.tag_id && listQuery.tag_id !== 0) {
-  filteredList = filteredList.filter(item =>
-    item.tags?.includes(listQuery.tag_id)
-  )
-}
-
-listRes.list = filteredList
-listRes.total = filteredList.length
-console.log('LISTA COMPLETA:', res.data.list.map(i => ({
-  alias: i.alias,
-  id: i.id,
-  tags: i.tags
-})))
-
-  }
-
-}
-
-
-
-  const handlerQuery = () => {
-    if (listQuery.page === 1) {
-      getList()
-    } else {
-      listQuery.page = 1
+    // Filtro por ALIAS (nombre)
+    if (listQuery.alias && listQuery.alias.trim() !== '') {
+      const searchTerm = listQuery.alias.toLowerCase().trim()
+      filteredList = filteredList.filter(item =>
+        item.alias?.toLowerCase().includes(searchTerm)
+      )
     }
+
+    // Filtro por TAG (isla)
+    if (listQuery.tag_id && listQuery.tag_id.trim() !== '') {
+      filteredList = filteredList.filter(item =>
+        item.tags?.includes(listQuery.tag_id)
+      )
+    }
+
+    // Filtro por ID
+    if (listQuery.id && listQuery.id.trim() !== '') {
+      const searchId = listQuery.id.toLowerCase().trim()
+      filteredList = filteredList.filter(item =>
+        item.id?.toLowerCase().includes(searchId)
+      )
+    }
+
+    // ✅ Paginar manualmente DESPUÉS de filtrar
+    const start = (listQuery.page - 1) * listQuery.page_size
+    const end = start + listQuery.page_size
+    
+    listRes.list = filteredList.slice(start, end)
+    listRes.total = filteredList.length
+    
+    console.log('🔍 Filtros aplicados:', {
+      alias: listQuery.alias,
+      tag_id: listQuery.tag_id,
+      id: listQuery.id,
+      totalFiltrado: filteredList.length,
+      paginaMostrada: listRes.list.length
+    })
   }
+}
+const handlerQuery = () => {
+  listQuery.page = 1 // ✅ Resetear a página 1 al filtrar
+  getList()
+}
 
   const del = async (row) => {
     const cf = await ElMessageBox.confirm(T('Confirm?', { param: T('Delete') }), {

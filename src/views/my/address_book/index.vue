@@ -71,11 +71,19 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-card class="list-page" shadow="hover">
-      <el-pagination background layout="prev, pager, next, sizes, jumper" :page-sizes="[10, 20, 50, 100]"
-        v-model:page-size="listQuery.page_size" v-model:current-page="listQuery.page" :total="listRes.total">
-      </el-pagination>
-    </el-card>
+<el-card class="list-page" shadow="hover">
+  
+  <el-pagination 
+    background 
+    layout="prev, pager, next, sizes, jumper" 
+    :page-sizes="[10, 20, 50, 100]"
+    :page-size="listQuery.page_size"
+    :current-page="listQuery.page"
+    :total="listRes.total"
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+  />
+</el-card>
     <el-dialog v-model="formVisible" width="800" :title="!formData.row_id ? T('Create') : T('Update')">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item :label="T('AddressBookName')" required prop="collection_id">
@@ -242,7 +250,16 @@ const handleSelectionChange = (val) => {
 }
 
 
+const handleSizeChange = (val) => {
+  listQuery.page_size = val
+  listQuery.page = 1 // Resetear a la primera página al cambiar el tamaño
+  getList()
+}
 
+const handleCurrentChange = (val) => {
+  listQuery.page = val
+  getList()
+}
 
 </script>
 
