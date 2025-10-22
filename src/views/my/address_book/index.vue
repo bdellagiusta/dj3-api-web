@@ -2,38 +2,33 @@
   <div>
     <el-card class="list-query" shadow="hover">
       <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
-      <el-form inline label-width="120px" :class="{ 'mobile-form': isMobile }">
+      <el-form inline label-width="120px" :class="{ 'mobile-form': isMobile, 'centered-form': true }">
  
         <el-form-item :label="T('Name')">
-          <el-input v-model="listQuery.alias" clearable></el-input>
+          <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
         </el-form-item>
 
         <el-form-item :label="T('Badge')">
-          <el-select v-model="listQuery.collection_id" clearable>
+          <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
             <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
             <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item v-if="!isAdmin" :label="T('Islands')">
-          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select island')">
+          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select island')" @change="handlerQuery">
             <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
               :label="t.name" :value="t.name" />
           </el-select>
         </el-form-item>
 
         <el-form-item v-if="isAdmin" :label="T('Tags')">
-          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')">
+          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')" @change="handlerQuery">
             <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
           </el-select>
         </el-form-item>
-        <!-- 
-        <el-form-item :label="T('Id')">
-          <el-input v-model="listQuery.id" clearable></el-input>
-        </el-form-item>
-         -->
+        
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
           <el-button v-if="isAdmin" type="danger" @click="toAdd">{{ T('Add') }}</el-button>
           <el-button v-if="isAdmin" type="primary" @click="showBatchEditTags">{{ T('BatchEditTags') }}</el-button>
         </el-form-item>
@@ -174,11 +169,6 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog v-model="shareToWebClientVisible" width="900" :close-on-click-modal="false" :fullscreen="isMobile">
-      <shareByWebClient :id="shareToWebClientForm.id" :hash="shareToWebClientForm.hash"
-        @cancel="shareToWebClientVisible = false" @success="" />
-    </el-dialog>
-
     <el-dialog v-model="batchEditTagVisible" width="800" :fullscreen="isMobile">
       <el-form :model="batchEditTagsFormData" label-width="120px" class="dialog-form">
         <el-form-item :label="T('Tags')" prop="tags">
@@ -197,17 +187,17 @@
 </template>
 
 <script setup>
-import { onActivated, onMounted, reactive, ref, watch, computed, onUnmounted } from 'vue'
+import { onActivated, onMounted, ref, watch, computed, onUnmounted } from 'vue'
 import { useBatchUpdateTagsRepositories, useRepositories } from '@/views/address_book'
 import { T } from '@/utils/i18n'
-import shareByWebClient from '@/views/address_book/components/shareByWebClient.vue'
+// import shareByWebClient - NO SE USA
 import { useAppStore } from '@/store/app'
 import { connectByClient } from '@/utils/peer'
 import { handleClipboard } from '@/utils/clipboard'
 import { CopyDocument } from '@element-plus/icons'
 import PlatformIcons from '@/components/icons/platform.vue'
 
-const appStore = useAppStore()
+// const appStore = useAppStore() - NO SE USA
 
 const {
   listRes,
@@ -225,9 +215,9 @@ const {
   toAdd,
   submit,
   tagListRes,
-  changeCollectionForUpdate,
+  // changeCollectionForUpdate - NO SE USA
   getCollectionListForUpdate,
-  collectionListResForUpdate,
+  // collectionListResForUpdate - NO SE USA
 } = useRepositories('my')
 
 const userInfo = computed(() => {
@@ -244,6 +234,17 @@ const checkMobile = () => {
   isMobile.value = window.innerWidth < 768
 }
 
+// Debounce para el input de texto (espera 500ms después de que el usuario deje de escribir)
+let debounceTimer = null
+const debouncedHandlerQuery = () => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  debounceTimer = setTimeout(() => {
+    handlerQuery()
+  }, 500)
+}
+
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
@@ -255,6 +256,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
 })
 
 onActivated(getList)
@@ -262,19 +266,14 @@ onActivated(getList)
 watch(() => listQuery.page, getList)
 watch(() => listQuery.page_size, handlerQuery)
 
-const shareToWebClientVisible = ref(false)
-const shareToWebClientForm = reactive({
-  id: '',
-  hash: '',
-  alias: '',
-})
-
-const toShowShare = (row) => {
-  shareToWebClientForm.id = row.id
-  shareToWebClientForm.hash = row.hash
-  shareToWebClientForm.alias = row.alias
-  shareToWebClientVisible.value = true
-}
+// Código comentado - no se usa en el template
+// const shareToWebClientVisible = ref(false)
+// const shareToWebClientForm = reactive({
+//   id: '',
+//   hash: '',
+//   alias: '',
+// })
+// const toShowShare = (row) => { ... }
 
 const {
   tagListRes: tagListResForBatchEdit,
@@ -326,6 +325,7 @@ const handleCurrentChange = (val) => {
   getList()
 }
 </script>
+
 <style scoped lang="scss">
 .title {
   text-align: center;
@@ -333,6 +333,27 @@ const handleCurrentChange = (val) => {
   font-weight: 700;
   padding-bottom: 2rem;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+// Centrar formulario de filtros
+.list-query {
+  :deep(.el-form) {
+    &.centered-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      
+      .el-form-item {
+        margin-right: 16px;
+        margin-bottom: 16px;
+      }
+      
+      .form-actions {
+        margin-right: 0;
+      }
+    }
+  }
 }
 
 // Estilos móviles para cards
@@ -435,7 +456,7 @@ const handleCurrentChange = (val) => {
         .el-form-item {
           display: flex;
           flex-direction: column;
-          align-items: center; // Añadido para centrar todo el contenido
+          align-items: center;
           width: 100%;
           margin-right: 0;
 
@@ -453,7 +474,6 @@ const handleCurrentChange = (val) => {
             display: flex;
             justify-content: center;
             
-            // Centrar los inputs dentro del contenido
             .el-input,
             .el-select,
             .el-date-picker {
