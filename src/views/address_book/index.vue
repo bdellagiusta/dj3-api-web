@@ -1,7 +1,11 @@
 <template>
   <div>
     <el-card class="list-query" shadow="hover">
-      <el-form inline label-width="120px">
+      <el-form inline label-width="100px">
+                <el-form-item :label="T('Id')" >
+          <el-input v-model="listQuery.id" clearable></el-input>
+        </el-form-item>
+
         <el-form-item :label="T('Owner')">
           <el-select v-model="listQuery.user_id" clearable @change="changeQueryUser">
             <el-option
@@ -12,17 +16,27 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="T('Id')">
-          <el-input v-model="listQuery.id" clearable></el-input>
+        
+        <el-form-item :label="T('Name')">
+          <el-input v-model="listQuery.alias" clearable></el-input>
         </el-form-item>
-        <el-form-item :label="T('Username')">
-          <el-input v-model="listQuery.username" clearable></el-input>
-        </el-form-item>
+            <el-form-item :label="T('Tags')">
+  <el-select 
+    v-model="listQuery.tag_id" 
+    clearable 
+    filterable 
+    :placeholder="T('Select tags')">
+    <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
+  </el-select>
+</el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
           <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
         </el-form-item>
+
       </el-form>
+
+
     </el-card>
     <el-card class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border>
@@ -43,17 +57,7 @@
             <span v-if="row.user_id"> <el-tag>{{ allUsers?.find(u => u.id === row.user_id)?.username }}</el-tag> </span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
-          <template #default="{row}">
-            <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
-            <span v-else>{{ row.collection?.name }}</span>
-          </template>
-        </el-table-column> -->
-        <!-- <el-table-column prop="username" :label="T('Username')" align="center" width="150"/> -->
-        <!-- <el-table-column prop="hostname" :label="T('Hostname')" align="center" width="200"/> -->
-        <el-table-column prop="tags" :label="T('Island')" align="center" width="250"/>
-        <!-- <el-table-column prop="peer.version" :label="T('Version')" align="center" width="150"/> -->
-        <!-- <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/> -->
+        <el-table-column prop="tags" :label="T('Tags')" align="center" width="250"/>
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
@@ -63,15 +67,19 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-card class="list-page" shadow="hover">
-      <el-pagination background
-                     layout="prev, pager, next, sizes, jumper"
-                     :page-sizes="[10,20,50,100]"
-                     v-model:page-size="listQuery.page_size"
-                     v-model:current-page="listQuery.page"
-                     :total="listRes.total">
-      </el-pagination>
-    </el-card>
+<el-card class="list-page" shadow="hover">
+  
+  <el-pagination 
+    background 
+    layout="prev, pager, next, sizes, jumper" 
+    :page-sizes="[10, 20, 50, 100]"
+    :page-size="listQuery.page_size"
+    :current-page="listQuery.page"
+    :total="listRes.total"
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+  />
+</el-card>
     <el-dialog v-model="formVisible" width="800" :title="!formData.row_id?T('Create') :T('Update') ">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item :label="T('Owner')" prop="user_id" required>
@@ -159,6 +167,7 @@
     listRes,
     listQuery,
     getList,
+    getTagList,
     handlerQuery,
     collectionListRes,
 
@@ -183,12 +192,23 @@
   onMounted(getAllUsers)
   onMounted(getList)
   onActivated(getList)
+  onMounted(getTagList)
+
 
   watch(() => listQuery.page, getList)
 
   watch(() => listQuery.page_size, handlerQuery)
 
+const handleSizeChange = (val) => {
+  listQuery.page_size = val
+  listQuery.page = 1 // Resetear a la primera página al cambiar el tamaño
+  getList()
+}
 
+const handleCurrentChange = (val) => {
+  listQuery.page = val
+  getList()
+}
 </script>
 
 <style scoped lang="scss">

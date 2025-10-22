@@ -153,7 +153,7 @@
     "One": "User tags"
   },
   "UserAddressBook": {
-    "One": "User address book"
+    "One": "All Devices"
   },
   "IsAdmin": {
     "One": "Is administrator"
@@ -210,7 +210,7 @@
     "One": "Peers"
   },
   "AddressBookManage": {
-    "One": ""
+    "One": "All Devices"
   },
   "GroupManage": {
     "One": "User groups"

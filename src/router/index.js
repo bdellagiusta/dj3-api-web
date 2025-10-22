@@ -93,7 +93,7 @@ export const asyncRoutes = [
       {
         path: 'peer',
         name: 'Peer',
-        meta: { title: 'PeerManage', icon: 'Monitor' /*keepAlive: true*/ },
+        meta: { title: 'PeerManage', icon: 'Platform' /*keepAlive: true*/ },
         component: () => import('@/views/peer/index.vue'),
       },
             {
@@ -114,12 +114,12 @@ export const asyncRoutes = [
         meta: { title: 'UserManage', icon: 'User' /*keepAlive: true*/ },
         component: () => import('@/views/user/index.vue'),
       },
-      {
-        path: 'group',
-        name: 'UserGroup',
-        meta: { title: 'GroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
-        component: () => import('@/views/group/index.vue'),
-      },
+      // {
+      //   path: 'group',
+      //   name: 'UserGroup',
+      //   meta: { title: 'GroupManage', icon: 'ChatRound' /*keepAlive: true*/ },
+      //   component: () => import('@/views/group/index.vue'),
+      // },
       // {
       //   path: 'deviceGroup',
       //   name: 'DeviceGroup',
@@ -148,12 +148,12 @@ export const asyncRoutes = [
       // },
 
 
-      {
-        path: '/oauth',
-        name: 'Oauth',
-        meta: { title: 'OauthManage', icon: 'Link' /*keepAlive: true*/ },
-        component: () => import('@/views/oauth/index.vue'),
-      },
+      // {
+      //   path: '/oauth',
+      //   name: 'Oauth',
+      //   meta: { title: 'OauthManage', icon: 'Link' /*keepAlive: true*/ },
+      //   component: () => import('@/views/oauth/index.vue'),
+      // },
       {
         path: '/userToken',
         name: 'UserToken',
@@ -184,12 +184,12 @@ export const asyncRoutes = [
         meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
         component: () => import('@/views/share_record/index.vue'),
       },
-      {
-        path: '/serverCmd',
-        name: 'ServerCmd',
-        meta: { title: 'ServerCmd', icon: 'Tools' /*keepAlive: true*/ },
-        component: () => import('@/views/rustdesk/control.vue'),
-      },
+      // {
+      //   path: '/serverCmd',
+      //   name: 'ServerCmd',
+      //   meta: { title: 'ServerCmd', icon: 'Tools' /*keepAlive: true*/ },
+      //   component: () => import('@/views/rustdesk/control.vue'),
+      // },
     ],
   },
 ]

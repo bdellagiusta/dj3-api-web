@@ -13,7 +13,7 @@
           </el-select>
         </el-form-item> -->
 
-    <el-form-item :label="T('Islands')">
+    <el-form-item v-if="!isAdmin" :label="T('Islands')">
   <el-select 
     v-model="listQuery.tag_id" 
     clearable 
@@ -22,6 +22,18 @@
     <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
   </el-select>
 </el-form-item>
+
+    <el-form-item v-if="isAdmin" :label="T('Tags')">
+  <el-select 
+    v-model="listQuery.tag_id" 
+    clearable 
+    filterable 
+    :placeholder="T('Select tags')">
+    <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
+  </el-select>
+</el-form-item>
+
+
 
         <el-form-item :label="T('Id')">
           <el-input v-model="listQuery.id" clearable></el-input>
@@ -228,10 +240,6 @@ const submitBatchEditTags = async () => {
     getList()
   }
 }
-onMounted(() => {
-  console.log('listQuery propiedades:', Object.keys(listQuery))
-  console.log('listQuery completo:', listQuery)
-})
 
 const multipleSelection = ref([])
 const handleSelectionChange = (val) => {
