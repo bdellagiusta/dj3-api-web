@@ -1,7 +1,7 @@
 <template>
   <div class="header-logo">
     <img :src="setting.logo" alt="" class="logo">
-    <div class="title">DJ3 Networks</div>
+    <div class="title">Dj3 Networks</div>
   </div>
   <Setting></Setting>
 </template>
@@ -52,8 +52,10 @@
     align-items: center;
 
     .title {
+        font-family:  'Century Gothic', sans-serif; 
       display: block;
       margin-left: 10px;
+
     }
 
     .logo {

@@ -2,6 +2,8 @@
   <div class="login-container">
     <div class="login-card">
       <img src="@/assets/logo.png" alt="logo" class="login-logo"/>
+        <div class="title">Dj3 Networks</div>
+                <div class="subtitle">DIGITAL SIGNAGE SERVICES & SOLUTIONS</div>
 
       <el-form v-if="!disablePwd" label-position="top" class="login-form">
         <el-form-item :label="T('Username')">
@@ -272,6 +274,24 @@ h1 {
   height: 80px;
   margin: 0 auto 20px;
   display: block;
+}
+.title{ 
+  font-family:  'Century Gothic', sans-serif; 
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+    margin-bottom: 5px;
+
+}
+.subtitle{
+  font-family:  'Century Gothic', sans-serif; 
+  font-size: 0.6rem;
+    font-weight: bold;
+
+  color: #e97516;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .el-form-item {

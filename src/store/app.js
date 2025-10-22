@@ -60,7 +60,7 @@ export const useAppStore = defineStore('App', {
     getAdminConfig () {
       console.log('getAdminConfig')
       return admin().then(res => {
-        this.replaceAdminTitle('DJ3 Networks')
+        this.replaceAdminTitle('Dj3 Networks')
         this.setting.hello = res.data.hello
       })
     },
