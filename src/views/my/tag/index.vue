@@ -19,8 +19,7 @@
         <el-table-column prop="id" label="ID" align="center"/>
         <el-table-column prop="collection_id" :label="T('AddressBook')" align="center" width="150">
           <template #default="{row}">
-            <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
-            <span v-else>{{ collectionListRes.list.find(c => c.id === row.collection_id)?.name }}</span>
+            {{ collectionListRes.list.find(c => c.id === row.collection_id)?.name }}
           </template>
         </el-table-column>
         <el-table-column prop="name" :label="T('Name')" align="center"/>
@@ -55,12 +54,16 @@
     </el-card>
     <el-dialog v-model="formVisible" :title="!formData.id?T('Create'):T('Update')" width="800">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
-        <el-form-item :label="T('AddressBookName')">
-          <el-select v-model="formData.collection_id" clearable>
-            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
-            <el-option v-for="c in collectionListResForUpdate.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
-          </el-select>
-        </el-form-item>
+<el-select v-model="formData.collection_id" clearable>
+  <el-option :value="0" :label="T('MyAddressBook')"></el-option>
+  <el-option
+    v-for="c in collectionListRes.list"
+    :key="c.id"
+    :label="c.name"
+    :value="c.id"
+  ></el-option>
+</el-select>
+
         <el-form-item :label="T('Name')" prop="name" required>
           <el-input v-model="formData.name"></el-input>
         </el-form-item>
@@ -115,8 +118,11 @@
 
   watch(() => listQuery.page_size, handlerQuery)
 
-  onMounted(getCollectionList)
   onMounted(getCollectionListForUpdate)
+onMounted(async () => {
+  await getCollectionList()
+  collectionListResForUpdate.list = collectionListRes.list
+})
 
 </script>
 

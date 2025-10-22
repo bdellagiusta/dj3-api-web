@@ -2,10 +2,6 @@
   <div>
     <el-card class="list-query" shadow="hover">
       <el-form inline label-width="100px">
-                <el-form-item :label="T('Id')" >
-          <el-input v-model="listQuery.id" clearable></el-input>
-        </el-form-item>
-
         <el-form-item :label="T('Owner')">
           <el-select v-model="listQuery.user_id" clearable @change="changeQueryUser">
             <el-option
@@ -20,15 +16,25 @@
         <el-form-item :label="T('Name')">
           <el-input v-model="listQuery.alias" clearable></el-input>
         </el-form-item>
-            <el-form-item :label="T('Tags')">
+
+<el-form-item :label="T('Tags')">
   <el-select 
-    v-model="listQuery.tag_id" 
+    v-model="listQuery.tags" 
     clearable 
     filterable 
     :placeholder="T('Select tags')">
-    <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
+    <el-option 
+      v-for="t in tagListRes.list" 
+      :key="t.id" 
+      :label="t.name" 
+      :value="t.name" />
   </el-select>
 </el-form-item>
+
+
+
+
+
         <el-form-item>
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
           <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
@@ -52,12 +58,33 @@
             </div>
           </template>
         </el-table-column>
+
+                          <el-table-column prop="collection_id" :label="T('Name')" align="center" width="150">
+            <template #default="{row}">
+              <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
+              <span v-else>{{ collectionListRes.list.find(c => c.id === row.collection_id)?.name }}</span>
+            </template>
+          </el-table-column>
         <el-table-column :label="T('Owner')" align="center" width="200">
           <template #default="{row}">
             <span v-if="row.user_id"> <el-tag>{{ allUsers?.find(u => u.id === row.user_id)?.username }}</el-tag> </span>
           </template>
         </el-table-column>
-        <el-table-column prop="tags" :label="T('Tags')" align="center" width="250"/>
+  <el-table-column :label="T('Tags')" align="center" width="250">
+    <template #default="{ row }">
+      <div v-if="row.tags && row.tags.length">
+        <el-tag
+          v-for="(tag, index) in row.tags"
+          :key="index"
+          type="info"
+          class="mx-1"
+        >
+          {{ tag }}
+        </el-tag>
+      </div>
+      <span v-else>—</span>
+    </template>
+  </el-table-column>
         <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
           <template #default="{row}">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
@@ -94,7 +121,6 @@
         </el-form-item>
         <el-form-item :label="T('AddressBookName')">
           <el-select v-model="formData.collection_id" clearable @change="changeCollectionForUpdate">
-            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
             <el-option v-for="c in collectionListResForUpdate.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
           </el-select>
         </el-form-item>
@@ -209,6 +235,8 @@ const handleCurrentChange = (val) => {
   listQuery.page = val
   getList()
 }
+
+
 </script>
 
 <style scoped lang="scss">

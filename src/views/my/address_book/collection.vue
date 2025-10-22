@@ -17,10 +17,8 @@
           <template #default="{row}">
             <template v-if="row.id>0">
               <el-button type="primary" @click="showRules(row)">{{ T('ShareRules') }}</el-button>
-                  <template v-if="listQuery.username === 'admin'">
         <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
         <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
-      </template>
             </template>
           </template>
         </el-table-column>
@@ -78,11 +76,14 @@
   watch(() => listQuery.page, getList)
 
   watch(() => listQuery.page_size, handlerQuery)
+  const isHiperdino = computed(() => userInfo.value?.name === 'hiperdino')
+
   const list = computed(_ => {
     if (listQuery.page > 1) {
       return listRes.list
     } else {
       return [
+
         { id: 0, name: T('MyAddressBook') },
         ...listRes.list,
       ]

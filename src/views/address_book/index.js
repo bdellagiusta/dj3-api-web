@@ -74,6 +74,16 @@ const getList = async () => {
         item.tags?.includes(listQuery.tag_id)
       )
     }
+// Filtrar por collection_id (insignia / address book)
+if (typeof listQuery.collection_id !== 'undefined' && listQuery.collection_id !== null && listQuery.collection_id !== '') {
+  // Aseguramos comparar como número (los ids de collection suelen ser number)
+  const collectionFilter = Number(listQuery.collection_id)
+  filteredList = filteredList.filter(item => {
+    // Si item.collection_id puede venir undefined o null, tratamos undefined como 0 si usas 0 para "MyAddressBook"
+    const itemCollection = typeof item.collection_id !== 'undefined' && item.collection_id !== null ? Number(item.collection_id) : 0
+    return itemCollection === collectionFilter
+  })
+}
 
     if (listQuery.id && listQuery.id.trim() !== '') {
       const searchId = listQuery.id.toLowerCase().trim()
@@ -81,6 +91,11 @@ const getList = async () => {
         item.id?.toLowerCase().includes(searchId)
       )
     }
+
+    if (listQuery.user_id) {
+  filteredList = filteredList.filter(item => item.user_id === listQuery.user_id)
+}
+
 
     const start = (listQuery.page - 1) * listQuery.page_size
     const end = start + listQuery.page_size

@@ -56,12 +56,12 @@ export const asyncRoutes = [
       //   meta: { title: 'MyPeer', icon: 'Monitor' /*keepAlive: true*/ },
       //   component: () => import('@/views/my/peer/index.vue'),
       // },
-      // {
-      //   path: 'address_book_collection',
-      //   name: 'MyAddressBookCollection',
-      //   meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
-      //   component: () => import('@/views/my/address_book/collection.vue'),
-      // },
+      {
+        path: 'address_book_collection',
+        name: 'MyAddressBookCollection',
+        meta: { title: 'AddressBookName', icon: 'Collection' /*keepAlive: true*/ },
+        component: () => import('@/views/my/address_book/collection.vue'),
+      },
 
       // {
       //   path: 'tag',
@@ -139,13 +139,13 @@ export const asyncRoutes = [
         meta: { title: 'UserEdit', hide: true },
         component: () => import('@/views/user/edit.vue'),
       },
-      // {
-      //   path: 'addressBookName',
-      //   name: 'UserAddressBookName',
-      //   meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
-      //   component: () => import('@/views/my/address_book/collection.vue'),
-      //   //component: () => import('@/views/address_book/collection.vue'),
-      // },
+      {
+        path: 'addressBookName',
+        name: 'UserAddressBookName',
+        meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
+        component: () => import('@/views/my/address_book/collection.vue'),
+        //component: () => import('@/views/address_book/collection.vue'),
+      },
 
 
       // {

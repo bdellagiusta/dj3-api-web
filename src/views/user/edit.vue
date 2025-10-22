@@ -4,7 +4,7 @@
       <el-form-item :label="T('Username')" prop="username">
         <el-input v-model="form.username"></el-input>
       </el-form-item>
-      <!-- <el-form-item :label="T('Group')" prop="group_id">
+      <el-form-item :label="T('Group')" prop="group_id">
         <el-select v-model="form.group_id">
           <el-option
               v-for="item in groupsList"
@@ -13,7 +13,7 @@
               :value="item.id"
           ></el-option>
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item :label="T('IsAdmin')" prop="is_admin">
         <el-switch v-model="form.is_admin"
                    :active-value="true"

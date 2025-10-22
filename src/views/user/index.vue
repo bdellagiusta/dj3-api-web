@@ -18,12 +18,12 @@
         <el-table-column prop="username" :label="T('Username')" align="center"/>
         <!-- <el-table-column prop="email" :label="T('Email')" align="center"/> -->
         <!-- <el-table-column prop="nickname" :label="T('Nickname')" align="center"/> -->
-        <!-- <el-table-column :label="T('Group')" align="center">
+        <el-table-column :label="T('Group')" align="center">
           <template #default="{row}">
             <span v-if="row.group_id"> <el-tag>{{ listRes.groups?.find(g => g.id === row.group_id)?.name }} </el-tag> </span>
             <span v-else> - </span>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column :label="T('Status')" align="center">
           <template #default="{row}">
             <el-switch v-model="row.status"
@@ -66,7 +66,6 @@
   import { update } from '@/api/user'
   import { ElMessageBox, ElMessage } from 'element-plus'
   import { onMounted, watch } from 'vue'
-  //列表
   const {
     listRes,
     listQuery,
@@ -87,7 +86,6 @@
 
   const { changePass } = useChangePwd()
 
-  //删除
   const { del } = useDel()
   const remove = async (row) => {
     const res = await del(row.id)
