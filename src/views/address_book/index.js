@@ -95,7 +95,14 @@ if (typeof listQuery.collection_id !== 'undefined' && listQuery.collection_id !=
     if (listQuery.user_id) {
   filteredList = filteredList.filter(item => item.user_id === listQuery.user_id)
 }
-
+     // Ordenar por alias alfabéticamente (case-insensitive)
+      filteredList.sort((a, b) => {
+        const aliasA = (a.alias || '').toLowerCase()
+        const aliasB = (b.alias || '').toLowerCase()
+        if (aliasA < aliasB) return -1
+        if (aliasA > aliasB) return 1
+        return 0
+      })
 
     const start = (listQuery.page - 1) * listQuery.page_size
     const end = start + listQuery.page_size

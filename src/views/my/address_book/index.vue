@@ -38,7 +38,7 @@
     <!-- Vista Desktop: Tabla -->
     <el-card v-if="!isMobile" class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border @selection-change="handleSelectionChange">
-        <el-table-column prop="alias" :label="T('Name')" align="center" />
+        <el-table-column prop="alias" :label="T('Name')" align="center" sortable />
         <el-table-column prop="id" label="ID" align="center" width="250">
           <template #default="{ row }">
             <div>
