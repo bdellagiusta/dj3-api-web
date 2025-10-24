@@ -1,269 +1,578 @@
 <template>
-  <div>
+  <div class="address-book-container">
+    <!-- Mobile Filter Toggle -->
     <el-card class="list-query" shadow="hover">
-      <el-form inline label-width="100px">
-        <el-form-item :label="T('Owner')">
-          <el-select v-model="listQuery.user_id" clearable @change="changeQueryUser">
-            <el-option
-                v-for="item in allUsers"
-                :key="item.id"
-                :label="item.username"
-                :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        
-        <el-form-item :label="T('Name')">
-          <el-input v-model="listQuery.alias" clearable></el-input>
-        </el-form-item>
-
-<el-form-item :label="T('Tags')">
-  <el-select 
-    v-model="listQuery.tags" 
-    clearable 
-    filterable 
-    :placeholder="T('Select tags')">
-    <el-option 
-      v-for="t in tagListRes.list" 
-      :key="t.id" 
-      :label="t.name" 
-      :value="t.name" />
-  </el-select>
-</el-form-item>
-
-
-
-
-
-        <el-form-item>
-          <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
-        </el-form-item>
-
-      </el-form>
-
-
-    </el-card>
-    <el-card class="list-body" shadow="hover">
-      <el-table :data="listRes.list" v-loading="listRes.loading" border>
-        <el-table-column prop="alias" :label="T('Name')" align="center"/>
-        <el-table-column prop="id" label="ID" align="center" width="200">
-          <template #default="{row}">
-            <div>
-              <PlatformIcons :name="platformList.find(p=>p.label===row.platform)?.icon" style="width: 20px;height: 20px;display: inline-block" color="var(--basicBlack)"/>
-              {{ row.id }}
-              <el-icon @click="handleClipboard(row.id, $event)">
-                <CopyDocument/>
-              </el-icon>
-            </div>
-          </template>
-        </el-table-column>
-
-                          <el-table-column prop="collection_id" :label="T('Name')" align="center" width="150">
-            <template #default="{row}">
-              <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
-              <span v-else>{{ collectionListRes.list.find(c => c.id === row.collection_id)?.name }}</span>
-            </template>
-          </el-table-column>
-        <el-table-column :label="T('Owner')" align="center" width="200">
-          <template #default="{row}">
-            <span v-if="row.user_id"> <el-tag>{{ allUsers?.find(u => u.id === row.user_id)?.username }}</el-tag> </span>
-          </template>
-        </el-table-column>
-  <el-table-column :label="T('Tags')" align="center" width="250">
-    <template #default="{ row }">
-      <div v-if="row.tags && row.tags.length">
-        <el-tag
-          v-for="(tag, index) in row.tags"
-          :key="index"
-          type="info"
-          class="mx-1"
-        >
-          {{ tag }}
-        </el-tag>
+      <div class="filter-header" @click="toggleFilters" v-if="isMobile">
+        <span>{{ T('Filters') }}</span>
+        <el-icon :class="{ 'rotate-icon': showFilters }">
+          <ArrowDown />
+        </el-icon>
       </div>
-      <span v-else>—</span>
-    </template>
-  </el-table-column>
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
-          <template #default="{row}">
-            <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-              <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-              <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <el-form 
+    :inline="!isMobile" 
+    label-width="100px" 
+    :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobile && !showFilters }"
+  >
+    <el-form-item :label="T('Owner')">
+      <el-select v-model="listQuery.user_id" clearable @change="handlerQuery">
+        <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
+      </el-select>
+    </el-form-item>
+
+    <el-form-item :label="T('Badge')">
+      <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
+        <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
+        <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
+      </el-select>
+    </el-form-item>
+
+    <el-form-item :label="T('Name')">
+      <el-input v-model="listQuery.alias" clearable @clear="handlerQuery" @keyup.enter="handlerQuery"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Tags')">
+      <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')"
+        @change="handlerQuery">
+        <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
+          :label="t.name" :value="t.name" />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item :class="{ 'full-width-button': isMobile }">
+      <el-button type="danger" @click="toAdd" class="add-button">{{ T('Add') }}</el-button>
+    </el-form-item>
+  </el-form>
+</el-card>
+
+<!-- Desktop Table View -->
+<el-card class="list-body desktop-view" shadow="hover" v-if="!isMobile">
+  <el-table :data="listRes.list" v-loading="listRes.loading" border>
+    <el-table-column prop="alias" :label="T('Name')" align="center" />
+    <el-table-column prop="id" label="ID" align="center" width="200">
+      <template #default="{ row }">
+        <div>
+          <PlatformIcons :name="platformList.find(p => p.label === row.platform)?.icon"
+            style="width: 20px;height: 20px;display: inline-block" color="var(--basicBlack)" />
+          {{ row.id }}
+          <el-icon @click="handleClipboard(row.id, $event)">
+            <CopyDocument />
+          </el-icon>
+        </div>
+      </template>
+    </el-table-column>
+
+    <el-table-column prop="collection_id" :label="T('Name')" align="center" width="150">
+      <template #default="{ row }">
+        <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
+        <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column :label="T('Owner')" align="center" width="200">
+      <template #default="{ row }">
+        <span v-if="row.user_id"> <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> </span>
+      </template>
+    </el-table-column>
+
+    <el-table-column :label="T('Tags')" align="center" width="250">
+      <template #default="{ row }">
+        <div v-if="row.tags && row.tags.length"
+          style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">
+          <el-tag v-for="(tag, index) in row.tags" :key="index" type="info" size="small">
+            {{ tag }}
+          </el-tag>
+        </div>
+        <span v-else>—</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
+      <template #default="{ row }">
+        <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+        <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+        <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</el-card>
+
+<!-- Mobile Card View -->
+<div class="mobile-list-view" v-if="isMobile" v-loading="listRes.loading">
+  <el-card 
+    class="mobile-item-card" 
+    shadow="hover" 
+    v-for="row in listRes.list" 
+    :key="row.id"
+  >
+    <div class="card-header">
+      <div class="card-title">
+        <PlatformIcons 
+          :name="platformList.find(p => p.label === row.platform)?.icon"
+          class="platform-icon" 
+          color="var(--basicBlack)" 
+        />
+        <span class="alias">{{ row.alias }}</span>
+      </div>
+      <el-tag v-if="row.user_id" size="small">
+        {{ allUsers?.find(u => u.id === row.user_id)?.username }}
+      </el-tag>
+    </div>
+
+    <div class="card-content">
+      <div class="info-row">
+        <span class="label">ID:</span>
+        <span class="value">
+          {{ row.id }}
+          <el-icon @click="handleClipboard(row.id, $event)" class="copy-icon">
+            <CopyDocument />
+          </el-icon>
+        </span>
+      </div>
+
+      <div class="info-row" v-if="row.collection_id !== undefined">
+        <span class="label">{{ T('Badge') }}:</span>
+        <span class="value">
+          <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
+          <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
+        </span>
+      </div>
+
+      <div class="info-row" v-if="row.tags && row.tags.length">
+        <span class="label">{{ T('Tags') }}:</span>
+        <div class="tags-container">
+          <el-tag v-for="(tag, index) in row.tags" :key="index" type="info" size="small">
+            {{ tag }}
+          </el-tag>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <el-button type="success" @click="connectByClient(row.id)" class="mobile-action-btn">
+        {{ T('Link') }}
+      </el-button>
+      <el-button type="warning" @click="toEdit(row)" class="mobile-action-btn">
+        {{ T('Edit') }}
+      </el-button>
+      <el-button type="danger" @click="del(row)" class="mobile-action-btn">
+        {{ T('Delete') }}
+      </el-button>
+    </div>
+  </el-card>
+</div>
+
+<!-- Pagination -->
 <el-card class="list-page" shadow="hover">
-  
   <el-pagination 
     background 
-    layout="prev, pager, next, sizes, jumper" 
+    :layout="isMobile ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'" 
     :page-sizes="[10, 20, 50, 100]"
-    :page-size="listQuery.page_size"
-    :current-page="listQuery.page"
+    :page-size="listQuery.page_size" 
+    :current-page="listQuery.page" 
     :total="listRes.total"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
+    :small="isMobile"
+    @size-change="handleSizeChange" 
+    @current-change="handleCurrentChange" 
   />
 </el-card>
-    <el-dialog v-model="formVisible" width="800" :title="!formData.row_id?T('Create') :T('Update') ">
-      <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
-        <el-form-item :label="T('Owner')" prop="user_id" required>
-          <el-select v-model="formData.user_id" @change="changeUserForUpdate">
-            <el-option
-                v-for="item in allUsers"
-                :key="item.id"
-                :label="item.username"
-                :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="T('AddressBookName')">
-          <el-select v-model="formData.collection_id" clearable @change="changeCollectionForUpdate">
-            <el-option v-for="c in collectionListResForUpdate.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="ID" prop="id" required>
-          <el-input v-model="formData.id"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Username')" prop="username">
-          <el-input v-model="formData.username"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Alias')" prop="alias">
-          <el-input v-model="formData.alias"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Hash')" prop="hash">
-          <el-input v-model="formData.hash"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Hostname')" prop="hostname">
-          <el-input v-model="formData.hostname"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Platform')" prop="platform">
-          <el-select v-model="formData.platform">
-            <el-option
-                v-for="item in platformList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
 
-        <el-form-item :label="T('Tags')" prop="tags">
-          <el-select v-model="formData.tags" multiple>
-            <el-option
-                v-for="item in tagListRes.list"
-                :key="item.name"
-                :label="item.name"
-                :value="item.name"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+<!-- Form Dialog -->
+<el-dialog 
+  v-model="formVisible" 
+  :width="isMobile ? '95%' : '800px'" 
+  :title="!formData.row_id ? T('Create') : T('Update')"
+  :fullscreen="isMobile"
+>
+  <el-form 
+    class="dialog-form" 
+    ref="form" 
+    :model="formData" 
+    :label-width="isMobile ? 'auto' : '120px'"
+    :label-position="isMobile ? 'top' : 'right'"
+  >
+    <el-form-item :label="T('Owner')" prop="user_id" required>
+      <el-select v-model="formData.user_id" @change="changeUserForUpdate">
+        <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
+      </el-select>
+    </el-form-item>
 
-        <el-form-item>
-          <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
-          <el-button @click="submit" type="primary">{{ T('Submit') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-  </div>
+    <el-form-item :label="T('AddressBookName')">
+      <el-select v-model="formData.collection_id" clearable @change="changeCollectionForUpdate">
+        <el-option v-for="c in collectionListResForUpdate.list" :key="c.id" :label="c.name"
+          :value="c.id"></el-option>
+      </el-select>
+    </el-form-item>
+
+    <el-form-item label="ID" prop="id" required>
+      <el-input v-model="formData.id"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Username')" prop="username">
+      <el-input v-model="formData.username"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Alias')" prop="alias">
+      <el-input v-model="formData.alias"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Hash')" prop="hash">
+      <el-input v-model="formData.hash"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Hostname')" prop="hostname">
+      <el-input v-model="formData.hostname"></el-input>
+    </el-form-item>
+
+    <el-form-item :label="T('Platform')" prop="platform">
+      <el-select v-model="formData.platform">
+        <el-option v-for="item in platformList" :key="item.value" :label="item.label"
+          :value="item.value"></el-option>
+      </el-select>
+    </el-form-item>
+
+    <el-form-item :label="T('Tags')" prop="tags">
+      <el-select v-model="formData.tags" multiple>
+        <el-option v-for="item in tagListRes.list" :key="item.name" :label="item.name"
+          :value="item.name"></el-option>
+      </el-select>
+    </el-form-item>
+ 
+    <el-form-item :class="{ 'mobile-form-actions': isMobile }">
+      <el-button @click="formVisible = false" :class="{ 'mobile-action-btn': isMobile }">
+        {{ T('Cancel') }}
+      </el-button>
+      <el-button @click="submit" type="primary" :class="{ 'mobile-action-btn': isMobile }">
+        {{ T('Submit') }}
+      </el-button>
+    </el-form-item>
+  </el-form>
+</el-dialog>
+</div>
 </template>
-
 <script setup>
-  import { onActivated, onMounted, watch } from 'vue'
-  import { useRepositories } from '@/views/address_book/index'
-  import { toWebClientLink } from '@/utils/webclient'
-  import { T } from '@/utils/i18n'
-  import { useRoute } from 'vue-router'
-  import { connectByClient } from '@/utils/peer'
-  import { useAppStore } from '@/store/app'
-  import { useUserStore } from '@/store/user'
-  import { handleClipboard } from '@/utils/clipboard'
-  import { CopyDocument } from '@element-plus/icons'
-  import PlatformIcons from '@/components/icons/platform.vue'
-  import { loadAllUsers } from '@/global'
+import { onActivated, onMounted, watch, ref } from 'vue'
+import { useRepositories } from '@/views/address_book/index'
+import { toWebClientLink } from '@/utils/webclient'
+import { T } from '@/utils/i18n'
+import { useRoute } from 'vue-router'
+import { connectByClient } from '@/utils/peer'
+import { useAppStore } from '@/store/app'
+import { useUserStore } from '@/store/user'
+import { handleClipboard } from '@/utils/clipboard'
+import { CopyDocument, ArrowDown } from '@element-plus/icons-vue'
+import PlatformIcons from '@/components/icons/platform.vue'
+import { loadAllUsers } from '@/global'
+import { useResponsive } from '@/composables/useResponsive'
 
-  const appStore = useAppStore()
-  const userStore = useUserStore()
-  const route = useRoute()
-  const { allUsers, getAllUsers } = loadAllUsers()
+const appStore = useAppStore()
+const userStore = useUserStore()
+const route = useRoute()
+const { allUsers, getAllUsers } = loadAllUsers()
+const { isMobile, isTablet, isDesktop } = useResponsive()
 
-  const {
-    listRes,
-    listQuery,
-    getList,
-    getTagList,
-    handlerQuery,
-    collectionListRes,
+const showFilters = ref(false)
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value
+}
 
-    del,
-    formVisible,
-    platformList,
-    formData,
-    toEdit,
-    toAdd,
-    submit,
-    changeUserForUpdate,
-    changeCollectionForUpdate,
-    collectionListResForUpdate,
-    tagListRes,
+const {
+  listRes,
+  listQuery,
+  getList,
+  getTagList,
+  handlerQuery,
+  collectionListRes,
+  getCollectionList,
 
-    changeQueryUser,
-  } = useRepositories('admin')
+  del,
+  formVisible,
+  platformList,
+  formData,
+  toEdit,
+  toAdd,
+  submit,
+  changeUserForUpdate,
+  changeCollectionForUpdate,
+  collectionListResForUpdate,
+  tagListRes,
 
-  if (route.query?.user_id) {
-    listQuery.user_id = parseInt(route.query.user_id)
-  }
-  onMounted(getAllUsers)
-  onMounted(getList)
-  onActivated(getList)
-  onMounted(getTagList)
+  changeQueryUser,
+} = useRepositories('admin')
 
+if (route.query?.user_id) {
+  listQuery.user_id = parseInt(route.query.user_id)
+}
 
-  watch(() => listQuery.page, getList)
+onMounted(getAllUsers)
+onMounted(getList)
+onMounted(getTagList)
+onMounted(getCollectionList)
+onActivated(getList)
 
-  watch(() => listQuery.page_size, handlerQuery)
+watch(() => listQuery.page, getList)
+watch(() => listQuery.page_size, handlerQuery)
 
 const handleSizeChange = (val) => {
   listQuery.page_size = val
-  listQuery.page = 1 // Resetear a la primera página al cambiar el tamaño
-  getList()
+  listQuery.page = 1
+  handlerQuery()
 }
 
 const handleCurrentChange = (val) => {
   listQuery.page = val
   getList()
 }
-
-
 </script>
-
 <style scoped lang="scss">
-.list-query .el-select {
-  --el-select-width: 160px;
+.address-book-container {
+  padding-bottom: 20px;
 }
 
-.colors {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.list-query {
+  margin-bottom: 16px;
 
-  .colorbox {
-    width: 50px;
-    height: 30px;
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+    font-weight: 500;
+    user-select: none;
+
+    .el-icon {
+      transition: transform 0.3s;
+      
+      &.rotate-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .el-select {
+    --el-select-width: 160px;
+  }
+}
+
+// Mobile form styles
+.mobile-form {
+  .el-form-item {
+    display: block;
+    margin-bottom: 16px;
+
+    :deep(.el-form-item__label) {
+      width: 100% !important;
+      text-align: left;
+      padding-bottom: 8px;
+    }
+
+    :deep(.el-form-item__content) {
+      margin-left: 0 !important;
+    }
+
+    .el-select,
+    .el-input {
+      width: 100%;
+    }
+  }
+
+  &.hidden-filters {
+    display: none;
+  }
+}
+
+.full-width-button {
+  width: 100%;
+  
+  .el-form-item__content {
+    width: 100%;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+}
+
+// Desktop table view
+.desktop-view {
+  .colors {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      display: block;
-      border-radius: 50%;
+    .colorbox {
+      width: 50px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        display: block;
+        border-radius: 50%;
+      }
     }
   }
-
 }
 
+// Mobile list view
+.mobile-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .mobile-item-card {
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ebeef5;
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+
+        .platform-icon {
+          width: 24px;
+          height: 24px;
+          flex-shrink: 0;
+        }
+
+        .alias {
+          font-weight: 600;
+          font-size: 16px;
+          word-break: break-word;
+        }
+      }
+    }
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 14px;
+
+        .label {
+          font-weight: 500;
+          color: #606266;
+          min-width: 60px;
+          flex-shrink: 0;
+        }
+
+        .value {
+          color: #303133;
+          word-break: break-all;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .copy-icon {
+            cursor: pointer;
+            flex-shrink: 0;
+            
+            &:hover {
+              color: #409eff;
+            }
+          }
+        }
+
+        .tags-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          flex: 1;
+        }
+      }
+    }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #ebeef5;
+
+      .mobile-action-btn {
+        width: 100%;
+        min-height: 44px;
+      }
+    }
+  }
+}
+
+// Pagination
+.list-page {
+  :deep(.el-pagination) {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+// Dialog mobile styles
+.dialog-form {
+  .el-select,
+  .el-input {
+    width: 100%;
+  }
+
+  .mobile-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+
+    :deep(.el-form-item__content) {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+}
+
+// Responsive breakpoints
+@media (max-width: 768px) {
+  .address-book-container {
+    padding: 0 8px 16px;
+  }
+
+  .list-query,
+  .list-page {
+    margin-left: -8px;
+    margin-right: -8px;
+    border-radius: 0;
+  }
+
+  .el-card {
+    :deep(.el-card__body) {
+      padding: 16px;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-list-view {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+}
 </style>

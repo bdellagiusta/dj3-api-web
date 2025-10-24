@@ -12,7 +12,7 @@
     "One": "Confirmar"
   },
   "Username": {
-    "One": "Nombre"
+    "One": "Usuario"
   },
   "Password": {
     "One": "Contraseña"
@@ -54,7 +54,7 @@
     "One": "Cancelar"
   },
   "Platform": {
-    "One": "Sistema Opertativo"
+    "One": "S.O"
   },
   "Status": {
     "One": "Estado"
@@ -69,7 +69,7 @@
     "One": "Agregar"
   },
   "Hostname": {
-    "One": "Nombre del host"
+    "One": "Host"
   },
   "Alias": {
     "One": "Alias"
@@ -120,7 +120,7 @@
     "One": "Memoria"
   },
   "Os": {
-    "One": "Sistema operativo"
+    "One": "S.O"
   },
   "Uuid": {
     "One": "Uuid"
@@ -549,5 +549,14 @@
   },
   "Badge": {
     "One": "Insignia"
+  },
+  "Hide Filters": {
+    "One": "Ocultar filtros"
+  },
+  "Show Filters": {
+    "One": "Mostrar filtros"
+  },
+  "Clear Filters": {
+    "One": "Limpiar filtros"
   }
 }

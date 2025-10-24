@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { T } from '@/utils/i18n'
 
-export function useRepositories () {
+export function useRepositories() {
   const route = useRoute()
   const user_id = route.query?.user_id
 

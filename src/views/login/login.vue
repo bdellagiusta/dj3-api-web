@@ -282,7 +282,10 @@ h1 {
   color: #fff;
   text-align: center;
     margin-bottom: 5px;
-
+  user-select: none; /* Evita la selección de texto */
+  -webkit-user-select: none; /* Para navegadores WebKit */
+  -moz-user-select: none;    /* Para Firefox */
+  -ms-user-select: none;     /* Para IE/Edge */
 }
 .subtitle{
   font-family:  'Century Gothic', sans-serif; 
@@ -292,11 +295,19 @@ h1 {
   color: #e97516;
   margin-bottom: 30px;
   text-align: center;
+    user-select: none; /* Evita la selección de texto */
+  -webkit-user-select: none; /* Para navegadores WebKit */
+  -moz-user-select: none;    /* Para Firefox */
+  -ms-user-select: none;     /* Para IE/Edge */
 }
 
 .el-form-item {
   ::v-deep(.el-form-item__label) {
     color: #fff;
+        user-select: none; /* Evita la selección de texto */
+  -webkit-user-select: none; /* Para navegadores WebKit */
+  -moz-user-select: none;    /* Para Firefox */
+  -ms-user-select: none;     /* Para IE/Edge */
   }
 
   .el-input {

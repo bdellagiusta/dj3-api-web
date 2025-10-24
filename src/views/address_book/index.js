@@ -12,7 +12,7 @@ const apis = {
   my: { list: my_list, remove: my_remove, create: my_create, update: my_update },
 }
 
-export function useRepositories (api_type = 'my') {
+export function useRepositories(api_type = 'my') {
   const {
     listRes: collectionListRes,
     listQuery: collectionListQuery,
@@ -23,79 +23,79 @@ export function useRepositories (api_type = 'my') {
   const listRes = reactive({
     list: [], total: 0, loading: false,
   })
-const listQuery = reactive({
-  page: 1,
-  page_size: 10,
-  id: null,
-  user_id: null,
-  username: null,
-  hostname: null,
-  collection_id: null,
-  alias: null,
-  tag_id: null,
-})
+  const listQuery = reactive({
+    page: 1,
+    page_size: 10,
+    id: null,
+    user_id: null,
+    username: null,
+    hostname: null,
+    collection_id: null,
+    alias: null,
+    tag_id: null,
+  })
 
- 
-const getList = async () => {
-  listRes.loading = true
-  
-  const res = await apis[api_type].list({ 
-    page: 1, 
-    page_size: 9999 
-  }).catch(_ => false)
-  
-  listRes.loading = false
-  
-  if (res) {
-    const ids = res.data.list.map(item => item.id)
-    if (ids.length) {
-      const peer_data = await simpleData({ ids }).catch(_ => false)
-      if (peer_data) {
-        res.data.list.forEach(item => {
-          const peer = peer_data.data.list.find(peer => peer.id === item.id)
-          if (peer) {
-            item.peer = peer
-          }
+
+  const getList = async () => {
+    listRes.loading = true
+
+    const res = await apis[api_type].list({
+      page: 1,
+      page_size: 9999
+    }).catch(_ => false)
+
+    listRes.loading = false
+
+    if (res) {
+      const ids = res.data.list.map(item => item.id)
+      if (ids.length) {
+        const peer_data = await simpleData({ ids }).catch(_ => false)
+        if (peer_data) {
+          res.data.list.forEach(item => {
+            const peer = peer_data.data.list.find(peer => peer.id === item.id)
+            if (peer) {
+              item.peer = peer
+            }
+          })
+        }
+      }
+
+      let filteredList = res.data.list
+
+      if (listQuery.alias && listQuery.alias.trim() !== '') {
+        const searchTerm = listQuery.alias.toLowerCase().trim()
+        filteredList = filteredList.filter(item =>
+          item.alias?.toLowerCase().includes(searchTerm)
+        )
+      }
+
+      if (listQuery.tag_id && listQuery.tag_id.trim() !== '') {
+        filteredList = filteredList.filter(item =>
+          item.tags?.includes(listQuery.tag_id)
+        )
+      }
+      // Filtrar por collection_id (insignia / address book)
+      if (typeof listQuery.collection_id !== 'undefined' && listQuery.collection_id !== null && listQuery.collection_id !== '') {
+        // Aseguramos comparar como número (los ids de collection suelen ser number)
+        const collectionFilter = Number(listQuery.collection_id)
+        filteredList = filteredList.filter(item => {
+          // Si item.collection_id puede venir undefined o null, tratamos undefined como 0 si usas 0 para "MyAddressBook"
+          const itemCollection = typeof item.collection_id !== 'undefined' && item.collection_id !== null ? Number(item.collection_id) : 0
+          return itemCollection === collectionFilter
         })
       }
-    }
 
-    let filteredList = res.data.list
+      if (listQuery.id && listQuery.id.trim() !== '') {
+        const searchId = listQuery.id.toLowerCase().trim()
+        filteredList = filteredList.filter(item =>
+          item.id?.toLowerCase().includes(searchId)
+        )
+      }
 
-    if (listQuery.alias && listQuery.alias.trim() !== '') {
-      const searchTerm = listQuery.alias.toLowerCase().trim()
-      filteredList = filteredList.filter(item =>
-        item.alias?.toLowerCase().includes(searchTerm)
-      )
-    }
-
-    if (listQuery.tag_id && listQuery.tag_id.trim() !== '') {
-      filteredList = filteredList.filter(item =>
-        item.tags?.includes(listQuery.tag_id)
-      )
-    }
-// Filtrar por collection_id (insignia / address book)
-if (typeof listQuery.collection_id !== 'undefined' && listQuery.collection_id !== null && listQuery.collection_id !== '') {
-  // Aseguramos comparar como número (los ids de collection suelen ser number)
-  const collectionFilter = Number(listQuery.collection_id)
-  filteredList = filteredList.filter(item => {
-    // Si item.collection_id puede venir undefined o null, tratamos undefined como 0 si usas 0 para "MyAddressBook"
-    const itemCollection = typeof item.collection_id !== 'undefined' && item.collection_id !== null ? Number(item.collection_id) : 0
-    return itemCollection === collectionFilter
-  })
-}
-
-    if (listQuery.id && listQuery.id.trim() !== '') {
-      const searchId = listQuery.id.toLowerCase().trim()
-      filteredList = filteredList.filter(item =>
-        item.id?.toLowerCase().includes(searchId)
-      )
-    }
-
-    if (listQuery.user_id) {
-  filteredList = filteredList.filter(item => item.user_id === listQuery.user_id)
-}
-     // Ordenar por alias alfabéticamente (case-insensitive)
+      if (listQuery.user_id) {
+        filteredList = filteredList.filter(item => item.user_id === listQuery.user_id)
+      }
+      // Ordenar por alias alfabéticamente (case-insensitive)
       filteredList.sort((a, b) => {
         const aliasA = (a.alias || '').toLowerCase()
         const aliasB = (b.alias || '').toLowerCase()
@@ -104,25 +104,25 @@ if (typeof listQuery.collection_id !== 'undefined' && listQuery.collection_id !=
         return 0
       })
 
-    const start = (listQuery.page - 1) * listQuery.page_size
-    const end = start + listQuery.page_size
-    
-    listRes.list = filteredList.slice(start, end)
-    listRes.total = filteredList.length
-    
-    console.log('🔍 Filtros aplicados:', {
-      alias: listQuery.alias,
-      tag_id: listQuery.tag_id,
-      id: listQuery.id,
-      totalFiltrado: filteredList.length,
-      paginaMostrada: listRes.list.length
-    })
+      const start = (listQuery.page - 1) * listQuery.page_size
+      const end = start + listQuery.page_size
+
+      listRes.list = filteredList.slice(start, end)
+      listRes.total = filteredList.length
+
+      console.log('🔍 Filtros aplicados:', {
+        alias: listQuery.alias,
+        tag_id: listQuery.tag_id,
+        id: listQuery.id,
+        totalFiltrado: filteredList.length,
+        paginaMostrada: listRes.list.length
+      })
+    }
   }
-}
-const handlerQuery = () => {
-  listQuery.page = 1
-  getList()
-}
+  const handlerQuery = () => {
+    listQuery.page = 1
+    getList()
+  }
 
   const del = async (row) => {
     const cf = await ElMessageBox.confirm(T('Confirm?', { param: T('Delete') }), {
@@ -255,7 +255,6 @@ const handlerQuery = () => {
     formData.id = peer.id
     formData.username = peer.username
     formData.hostname = peer.hostname
-    //匹配os
     if (peer.os.indexOf('windows') !== -1) {
       formData.platform = platformList.find(item => item.label === 'Windows').value
     } else if (peer.os.indexOf('linux') !== -1) {
@@ -299,7 +298,7 @@ const handlerQuery = () => {
   }
 }
 
-export function useBatchUpdateTagsRepositories () {
+export function useBatchUpdateTagsRepositories() {
   const {
     listRes: tagListRes,
     listQuery: tagListQuery,

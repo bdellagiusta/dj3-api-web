@@ -5,7 +5,7 @@ import { formatTime } from '@/utils/time'
 import { T } from '@/utils/i18n'
 import { downBlob, jsonToCsv } from '@/utils/file'
 
-export function useRepositories () {
+export function useRepositories() {
   const listRes = reactive({
     list: [], total: 0, loading: false,
   })
@@ -95,7 +95,7 @@ export function useRepositories () {
   }
 }
 
-export function useFileRepositories () {
+export function useFileRepositories() {
   const listRes = reactive({
     list: [], total: 0, loading: false,
   })

@@ -6,25 +6,14 @@
       </el-form-item>
       <el-form-item :label="T('Group')" prop="group_id">
         <el-select v-model="form.group_id">
-          <el-option
-              v-for="item in groupsList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-          ></el-option>
+          <el-option v-for="item in groupsList" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item :label="T('IsAdmin')" prop="is_admin">
-        <el-switch v-model="form.is_admin"
-                   :active-value="true"
-                   :inactive-value="false"
-        ></el-switch>
+        <el-switch v-model="form.is_admin" :active-value="true" :inactive-value="false"></el-switch>
       </el-form-item>
       <el-form-item :label="T('Status')" prop="status">
-        <el-switch v-model="form.status"
-                   :active-value="ENABLE_STATUS"
-                   :inactive-value="DISABLE_STATUS"
-        ></el-switch>
+        <el-switch v-model="form.status" :active-value="ENABLE_STATUS" :inactive-value="DISABLE_STATUS"></el-switch>
       </el-form-item>
       <!-- <el-form-item :label="T('Remark')" prop="remark">
           <el-input v-model="form.remark"></el-input>
@@ -38,19 +27,18 @@
 </template>
 
 <script setup>
-  import { useRoute } from 'vue-router'
-  import { useGetDetail, useSubmit } from '@/views/user/composables/edit'
-  import { ENABLE_STATUS, DISABLE_STATUS } from '@/utils/common_options'
-  import { T } from '@/utils/i18n'
+import { useRoute } from 'vue-router'
+import { useGetDetail, useSubmit } from '@/views/user/composables/edit'
+import { ENABLE_STATUS, DISABLE_STATUS } from '@/utils/common_options'
+import { T } from '@/utils/i18n'
 
-  const route = useRoute()
-  const { form, item, getDetail, groupsList } = useGetDetail(route.params.id)
+const route = useRoute()
+const { form, item, getDetail, groupsList } = useGetDetail(route.params.id)
 
-  const { root, rules, validate, submit, cancel } = useSubmit(form, route.params.id)
+const { root, rules, validate, submit, cancel } = useSubmit(form, route.params.id)
 
 </script>
 
 <style lang="scss" scoped>
-.form-card {
-}
+.form-card {}
 </style>

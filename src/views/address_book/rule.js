@@ -10,7 +10,7 @@ const apis = {
   my: { list: my_list, remove: my_remove, create: my_create, update: my_update },
 }
 
-export function useRepositories (api_type = 'my') {
+export function useRepositories(api_type = 'my') {
   const listRes = reactive({
     list: [], total: 0, loading: false,
   })

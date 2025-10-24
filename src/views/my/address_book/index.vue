@@ -1,44 +1,47 @@
 <template>
   <div>
     <el-card class="list-query" shadow="hover">
-      <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
-      <el-form inline label-width="120px" :class="{ 'mobile-form': isMobile, 'centered-form': true }">
- 
-        <el-form-item :label="T('Name')">
-          <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
-        </el-form-item>
+  <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
+  <el-form inline label-width="120px" :class="{ 'mobile-form': isMobile, 'centered-form': true }">
 
-        <el-form-item :label="T('Badge')">
-          <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
-            <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
-            <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
-          </el-select>
-        </el-form-item>
+    <el-form-item :label="T('Name')">
+      <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
+    </el-form-item>
 
-        <el-form-item v-if="!isAdmin" :label="T('Islands')">
-          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select island')" @change="handlerQuery">
-            <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
-              :label="t.name" :value="t.name" />
-          </el-select>
-        </el-form-item>
+    <el-form-item :label="T('Badge')">
+      <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
+        <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
+        <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
+      </el-select>
+    </el-form-item>
 
-        <el-form-item v-if="isAdmin" :label="T('Tags')">
-          <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')" @change="handlerQuery">
-            <el-option v-for="t in tagListRes.list" :key="t.id" :label="t.name" :value="t.name" />
-          </el-select>
-        </el-form-item>
-        
+    <el-form-item v-if="!isAdmin" :label="T('Islands')">
+      <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select island')"
+        @change="handlerQuery">
+        <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
+          :label="t.name" :value="t.name" />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item v-if="isAdmin" :label="T('Tags')">
+      <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')"
+        @change="handlerQuery">
+        <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
+          :label="t.name" :value="t.name" />
+      </el-select>
+    </el-form-item>
+
         <el-form-item class="form-actions">
-          <el-button v-if="isAdmin" type="danger" @click="toAdd">{{ T('Add') }}</el-button>
-          <el-button v-if="isAdmin" type="primary" @click="showBatchEditTags">{{ T('BatchEditTags') }}</el-button>
+          <el-button type="danger" @click="clearFilters" :class="isMobile ? 'mobile-clear-btn' : 'desktop-clear-btn'">{{ T('Clear Filters') }}</el-button>
         </el-form-item>
+
       </el-form>
     </el-card>
 
     <!-- Vista Desktop: Tabla -->
     <el-card v-if="!isMobile" class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border @selection-change="handleSelectionChange">
-        <el-table-column prop="alias" :label="T('Name')" align="center" sortable />
+        <el-table-column prop="alias" :label="T('Name')" align="center" />
         <el-table-column prop="id" label="ID" align="center" width="250">
           <template #default="{ row }">
             <div>
@@ -190,14 +193,13 @@
 import { onActivated, onMounted, ref, watch, computed, onUnmounted } from 'vue'
 import { useBatchUpdateTagsRepositories, useRepositories } from '@/views/address_book'
 import { T } from '@/utils/i18n'
-// import shareByWebClient - NO SE USA
 import { useAppStore } from '@/store/app'
 import { connectByClient } from '@/utils/peer'
 import { handleClipboard } from '@/utils/clipboard'
 import { CopyDocument } from '@element-plus/icons'
 import PlatformIcons from '@/components/icons/platform.vue'
 
-// const appStore = useAppStore() - NO SE USA
+const appStore = useAppStore()
 
 const {
   listRes,
@@ -266,15 +268,6 @@ onActivated(getList)
 watch(() => listQuery.page, getList)
 watch(() => listQuery.page_size, handlerQuery)
 
-// Código comentado - no se usa en el template
-// const shareToWebClientVisible = ref(false)
-// const shareToWebClientForm = reactive({
-//   id: '',
-//   hash: '',
-//   alias: '',
-// })
-// const toShowShare = (row) => { ... }
-
 const {
   tagListRes: tagListResForBatchEdit,
   getTagList: getTagListForBatchEdit,
@@ -324,6 +317,15 @@ const handleCurrentChange = (val) => {
   listQuery.page = val
   getList()
 }
+
+// Función para limpiar todos los filtros
+const clearFilters = () => {
+  listQuery.alias = ''
+  listQuery.collection_id = null
+  listQuery.tag_id = null
+  listQuery.page = 1
+  getList()
+}
 </script>
 
 <style scoped lang="scss">
@@ -343,13 +345,18 @@ const handleCurrentChange = (val) => {
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-      
+
       .el-form-item {
         margin-right: 16px;
         margin-bottom: 16px;
       }
-      
+
       .form-actions {
+        margin-right: 0;
+      }
+
+      .form-actions-mobile {
+        width: 100%;
         margin-right: 0;
       }
     }
@@ -380,7 +387,7 @@ const handleCurrentChange = (val) => {
     }
 
     .mobile-card-title {
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 600;
       margin: 0;
       flex: 1;
@@ -473,23 +480,63 @@ const handleCurrentChange = (val) => {
             margin-left: 0 !important;
             display: flex;
             justify-content: center;
-            
+
             .el-input,
-            .el-select,
-            .el-date-picker {
-              text-align: center;
+            .el-select {
+              width: 100%;
+              max-width: 100%;
+              
+              :deep(.el-input__inner) {
+                text-align: center;
+              }
+              
+              :deep(.el-input__wrapper) {
+                width: 100%;
+              }
             }
           }
         }
 
-        &.form-actions {
-          display: flex;
-          justify-content: center;
-          flex-wrap: wrap;
-          
-          .el-button {
-            flex: 1;
-            margin: 4px;
+        .form-actions {
+          .el-form-item__content {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+
+            .el-button {
+              flex: 1;
+              margin: 4px;
+              min-width: 45%;
+            }
+
+            .mobile-clear-btn {
+              flex: 1 1 100%;
+              margin-bottom: 12px;
+              margin-top:20px;
+              min-width: 100%;
+            }
+          }
+        }
+
+        .form-actions-mobile {
+          width: 100%;
+
+          .el-form-item__content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+
+            .mobile-clear-btn {
+              width: 100%;
+              margin: 0;
+            }
+
+            .mobile-action-btn {
+              width: 100%;
+              margin: 0;
+            }
           }
         }
       }
@@ -523,5 +570,8 @@ const handleCurrentChange = (val) => {
       border-radius: 50%;
     }
   }
+}
+.desktop-clear-btn {
+ margin-left: 5rem;
 }
 </style>

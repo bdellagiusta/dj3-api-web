@@ -23,7 +23,7 @@
     <el-form-item :label="T('Username')" prop="username">
       <el-input v-model="ABFormData.username"></el-input>
     </el-form-item>
-    <el-form-item :label="T('Alias')" prop="alias">
+    <el-form-item :label="T('Name')" prop="alias">
       <el-input v-model="ABFormData.alias"></el-input>
     </el-form-item>
     <el-form-item :label="T('Hostname')" prop="hostname">

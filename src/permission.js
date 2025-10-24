@@ -21,7 +21,6 @@ router.beforeEach(async (to, from, next) => {
 
   const token = getToken()
   if (!token) {
-    //无token，跳转到登录
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
@@ -29,7 +28,6 @@ router.beforeEach(async (to, from, next) => {
     }
 
   } else {
-    //有token
 
     const userStore = useUserStore(pinia)
 
