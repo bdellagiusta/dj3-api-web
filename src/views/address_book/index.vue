@@ -1,12 +1,20 @@
 <template>
   <div class="address-book-container">
-    <!-- Mobile Filter Toggle -->
+    <!-- Filter Card with Modern Design -->
     <el-card class="list-query" shadow="hover">
-      <div class="filter-header" @click="toggleFilters" v-if="isMobile">
-        <span>{{ T('Filters') }}</span>
-        <el-icon :class="{ 'rotate-icon': showFilters }">
-          <ArrowDown />
-        </el-icon>
+      <div class="mobile-header" v-if="isMobile">
+        <div class="filter-title">
+          <el-icon class="filter-icon"><Filter /></el-icon>
+          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+        </div>
+        <el-button 
+          class="filter-toggle" 
+          type="primary" 
+          @click="showFilters = !showFilters"
+          :icon="showFilters ? ArrowUp : ArrowDown"
+        >
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+        </el-button>
       </div>
       <el-form 
     :inline="!isMobile" 
@@ -39,8 +47,12 @@
     </el-form-item>
 
     <el-form-item :class="{ 'full-width-button': isMobile }">
-      <el-button type="danger" @click="toAdd" class="add-button">{{ T('Add') }}</el-button>
+      <el-button type="success" @click="toAdd" class="add-button">{{ T('Add') }}</el-button>
+    </el-form-item>        
+    <el-form-item class="form-actions">
+          <el-button type="danger" @click="clearFilters" class="add-button">{{ T('Clear Filters') }}</el-button>
     </el-form-item>
+
   </el-form>
 </el-card>
 
@@ -88,7 +100,7 @@
 
     <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
       <template #default="{ row }">
-        <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+        <el-button type="primary" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
         <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
         <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
       </template>
@@ -148,7 +160,7 @@
     </div>
 
     <div class="card-actions">
-      <el-button type="success" @click="connectByClient(row.id)" class="mobile-action-btn">
+      <el-button type="primary" @click="connectByClient(row.id)" class="mobile-action-btn">
         {{ T('Link') }}
       </el-button>
       <el-button type="warning" @click="toEdit(row)" class="mobile-action-btn">
@@ -237,11 +249,11 @@
       </el-select>
     </el-form-item>
  
-    <el-form-item :class="{ 'mobile-form-actions': isMobile }">
-      <el-button @click="formVisible = false" :class="{ 'mobile-action-btn': isMobile }">
+    <el-form-item class="form-actions-dialog">
+      <el-button @click="formVisible = false" :class="{ 'btn-block': isMobile }">
         {{ T('Cancel') }}
       </el-button>
-      <el-button @click="submit" type="primary" :class="{ 'mobile-action-btn': isMobile }">
+      <el-button @click="submit" type="primary" :class="{ 'btn-block': isMobile }">
         {{ T('Submit') }}
       </el-button>
     </el-form-item>
@@ -259,10 +271,10 @@ import { connectByClient } from '@/utils/peer'
 import { useAppStore } from '@/store/app'
 import { useUserStore } from '@/store/user'
 import { handleClipboard } from '@/utils/clipboard'
-import { CopyDocument, ArrowDown } from '@element-plus/icons-vue'
 import PlatformIcons from '@/components/icons/platform.vue'
 import { loadAllUsers } from '@/global'
 import { useResponsive } from '@/composables/useResponsive'
+import { ArrowDown, ArrowUp, CopyDocument, Delete, Plus } from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -348,6 +360,23 @@ const handleCurrentChange = (val) => {
       }
     }
   }
+    .filter-toggle {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .filter-form {
+    .el-form-item {
+      display: block;
+      margin-bottom: 0px;
+      
+      &.form-item-full {
+        width: 100%;
+      }
+    }
+
+
 
   .el-select {
     --el-select-width: 160px;
@@ -364,6 +393,7 @@ const handleCurrentChange = (val) => {
       width: 100% !important;
       text-align: left;
       padding-bottom: 8px;
+      display:block !important
     }
 
     :deep(.el-form-item__content) {
@@ -467,13 +497,13 @@ const handleCurrentChange = (val) => {
 
         .label {
           font-weight: 500;
-          color: #606266;
+          color: #f2f3f3;
           min-width: 60px;
           flex-shrink: 0;
         }
 
         .value {
-          color: #303133;
+          color: #eeeeee;
           word-break: break-all;
           flex: 1;
           display: flex;
@@ -508,7 +538,8 @@ const handleCurrentChange = (val) => {
 
       .mobile-action-btn {
         width: 100%;
-        min-height: 44px;
+        margin: 0 !important;
+        min-height: 35px;
       }
     }
   }
@@ -548,8 +579,18 @@ const handleCurrentChange = (val) => {
 @media (max-width: 768px) {
   .address-book-container {
     padding: 0 8px 16px;
+  }  
+  .el-button{
+        width: 100%;
+        margin: 0.4rem 0 !important;
+        padding: 1.2rem;
   }
-
+  .add-button {
+    width: 100%;
+  }
+  :first-child.add-button {
+    margin-top: 0.5rem;
+  }
   .list-query,
   .list-page {
     margin-left: -8px;

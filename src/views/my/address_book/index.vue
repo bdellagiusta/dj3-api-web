@@ -1,8 +1,24 @@
 <template>
-  <div>
+  <div>  
     <el-card class="list-query" shadow="hover">
-  <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
-  <el-form inline label-width="120px" :class="{ 'mobile-form': isMobile, 'centered-form': true }">
+      <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
+
+      <div class="mobile-header" v-if="isMobile">
+        <div class="filter-title">
+          <el-icon class="filter-icon"><Filter /></el-icon>
+          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+        </div>
+        <el-button 
+          class="filter-toggle" 
+          type="primary" 
+          @click="showFilters = !showFilters"
+          :icon="showFilters ? ArrowUp : ArrowDown"
+        >
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+        </el-button>
+      </div>
+  <el-form     :inline="!isMobile" 
+label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobile && !showFilters }">
 
     <el-form-item :label="T('Name')">
       <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
@@ -221,7 +237,10 @@ const {
   getCollectionListForUpdate,
   // collectionListResForUpdate - NO SE USA
 } = useRepositories('my')
-
+const showFilters = ref(false)
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value
+}
 const userInfo = computed(() => {
   const userStr = localStorage.getItem('user_info')
   return userStr ? JSON.parse(userStr) : null
@@ -359,7 +378,11 @@ const clearFilters = () => {
         width: 100%;
         margin-right: 0;
       }
+      
     }
+      &.hidden-filters {
+    display: none;
+  }
   }
 }
 
@@ -574,4 +597,40 @@ const clearFilters = () => {
 .desktop-clear-btn {
  margin-left: 5rem;
 }
+.list-query {
+  margin-bottom: 16px;
+
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+    font-weight: 500;
+    user-select: none;
+
+    .el-icon {
+      transition: transform 0.3s;
+      
+      &.rotate-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+    .filter-toggle {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .filter-form {
+    .el-form-item {
+      display: block;
+      margin-bottom: 0px;
+      
+      &.form-item-full {
+        width: 100%;
+      }
+    }
+  }
 </style>

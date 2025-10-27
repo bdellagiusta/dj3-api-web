@@ -3,21 +3,13 @@
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
       <div class="mobile-header" v-if="isMobile">
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-        >
-          {{ showFilters ? T('HideFilters') : T('ShowFilters') }}
+        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
+          :icon="showFilters ? ArrowUp : ArrowDown">
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
         </el-button>
       </div>
 
-      <el-form 
-        v-show="!isMobile || showFilters"
-        :inline="!isMobile" 
-        label-width="120px"
-        class="filter-form"
-      >
+      <el-form v-show="!isMobile || showFilters" :inline="!isMobile" label-width="120px" class="filter-form">
         <el-form-item :label="T('Owner')" class="form-item-full">
           <el-select v-model="listQuery.user_id" clearable @change="changeUser">
             <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
@@ -30,7 +22,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="handlerQuery" :class="{ 'btn-block': isMobile }">{{ T('Filter') }}</el-button>
+          <el-button type="primary" @click="handlerQuery" :class="{ 'btn-block': isMobile }">{{ T('Filter') }} </el-button>
           <el-button type="danger" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
         </el-form-item>
       </el-form>
@@ -65,7 +57,7 @@
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center" />
         <el-table-column :label="T('Actions')" align="center" width="250">
           <template #default="{ row }">
-            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
             <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
@@ -74,12 +66,7 @@
 
     <!-- Mobile Card View -->
     <div v-else class="mobile-list" v-loading="listRes.loading">
-      <el-card 
-        v-for="row in listRes.list" 
-        :key="row.id" 
-        class="tag-card" 
-        shadow="hover"
-      >
+      <el-card v-for="row in listRes.list" :key="row.id" class="tag-card" shadow="hover">
         <div class="card-header">
           <div class="tag-preview">
             <div class="tag-colorbox" :style="{ backgroundColor: 'var(--tag-bg-color)' }">
@@ -88,7 +75,7 @@
             <div class="tag-title">
               <strong class="tag-name">{{ row.name }}</strong>
               <span class="tag-owner" v-if="row.user_id">
-                <el-tag size="small">{{ allUsers?.find(u => u.id === row.user_id)?.username }}</el-tag>
+                <el-tag size="small">{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag>
               </span>
             </div>
           </div>
@@ -100,7 +87,7 @@
             <span class="label">{{ T('Owner') }}:</span>
             <span class="value">
               <el-tag size="small" v-if="row.user_id">
-                {{ allUsers?.find(u => u.id === row.user_id)?.username }}
+                {{allUsers?.find(u => u.id === row.user_id)?.username}}
               </el-tag>
               <span v-else>-</span>
             </span>
@@ -130,7 +117,7 @@
         </div>
 
         <div class="card-actions">
-          <el-button @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
+          <el-button type="warning" @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
           <el-button type="danger" @click="del(row)" size="small">{{ T('Delete') }}</el-button>
         </div>
       </el-card>
@@ -140,23 +127,14 @@
 
     <!-- Pagination -->
     <el-card class="list-page" shadow="hover">
-      <el-pagination 
-        background 
-        :layout="isMobile ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'" 
-        :page-sizes="[10, 20, 50, 100]"
-        v-model:page-size="listQuery.page_size" 
-        v-model:current-page="listQuery.page" 
-        :total="listRes.total"
-        :small="isMobile"
-      />
+      <el-pagination background :layout="isMobile ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'"
+        :page-sizes="[10, 20, 50, 100]" v-model:page-size="listQuery.page_size" v-model:current-page="listQuery.page"
+        :total="listRes.total" :small="isMobile" />
     </el-card>
 
     <!-- Edit/Create Dialog -->
-    <el-dialog 
-      v-model="formVisible" 
-      :title="!formData.id ? T('Create') : T('Update')" 
-      :width="isMobile ? '95%' : '800px'"
-    >
+    <el-dialog v-model="formVisible" :title="!formData.id ? T('Create') : T('Update')"
+      :width="isMobile ? '95%' : '800px'">
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item :label="T('Owner')" prop="user_id" required>
           <el-select v-model="formData.user_id" @change="changeUserForUpdate">
@@ -175,11 +153,7 @@
         </el-form-item>
         <el-form-item :label="T('Color')" prop="color" required>
           <div class="color-picker-wrapper">
-            <el-color-picker 
-              v-model="formData.color" 
-              show-alpha 
-              @active-change="activeChange"
-            />
+            <el-color-picker v-model="formData.color" show-alpha @active-change="activeChange" />
             <div class="colors">
               <div style="background-color: var(--tag-bg-color)" class="colorbox">
                 <div :style="{ backgroundColor: currentColor }" class="dot"></div>
@@ -201,6 +175,7 @@ import { onMounted, watch, onActivated, ref } from 'vue'
 import { useRepositories } from '@/views/tag/index'
 import { T } from '@/utils/i18n'
 import { loadAllUsers } from '@/global'
+import { ArrowDown, ArrowUp, CopyDocument, Delete, Plus } from '@element-plus/icons-vue'
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -287,7 +262,6 @@ watch(() => listQuery.page_size, handlerQuery)
   }
 }
 
-/* Mobile Styles */
 @media (max-width: 768px) {
   .tags-admin-container {
     padding: 5px;
@@ -295,9 +269,10 @@ watch(() => listQuery.page_size, handlerQuery)
 
   .mobile-header {
     margin-bottom: 15px;
-    
+
     .filter-toggle {
       width: 100%;
+      padding: 1.2rem;
     }
   }
 
@@ -305,12 +280,26 @@ watch(() => listQuery.page_size, handlerQuery)
     .el-form-item {
       display: block;
       margin-bottom: 15px;
-      
+      width: 100%;
+
       &.form-item-full {
+        width: 100%;
+      }
+
+      // Asegurar que el label no reduzca el espacio del input
+      :deep(.el-form-item__label) {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 5px;
+      }
+
+      :deep(.el-form-item__content) {
+        margin-left: 0 !important;
         width: 100%;
       }
     }
 
+    .el-input,
     .el-select {
       width: 100% !important;
     }
@@ -320,6 +309,13 @@ watch(() => listQuery.page_size, handlerQuery)
       flex-direction: column;
       gap: 10px;
       width: 100%;
+      margin-left: 0 !important;
+
+      .el-button {
+        width: 100%;
+        margin: 0.4rem 0 !important;
+        padding: 1.2rem;
+      }
 
       .btn-block {
         width: 100%;
@@ -330,7 +326,7 @@ watch(() => listQuery.page_size, handlerQuery)
 
   .list-page {
     margin-top: 10px;
-    
+
     .el-pagination {
       display: flex;
       justify-content: center;
@@ -342,7 +338,7 @@ watch(() => listQuery.page_size, handlerQuery)
 /* Mobile Card List */
 .mobile-list {
   margin-top: 10px;
-  
+
   .tag-card {
     margin-bottom: 12px;
     transition: all 0.3s ease;
@@ -395,7 +391,7 @@ watch(() => listQuery.page_size, handlerQuery)
 
         .tag-name {
           font-size: 16px;
-          color: #303133;
+          color: #ffffff;
           word-break: break-word;
           line-height: 1.4;
         }
@@ -476,15 +472,17 @@ watch(() => listQuery.page_size, handlerQuery)
   }
 
   .card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid #ebeef5;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
 
     .el-button {
-      margin: 0;
       width: 100%;
+      margin: 0;
+      font-size: 0.9rem;
+      padding: 1.2rem;
     }
   }
 }
@@ -493,6 +491,7 @@ watch(() => listQuery.page_size, handlerQuery)
 .dialog-form {
   .el-form-item {
     margin-bottom: 18px;
+    display: block !important;
 
     .el-select,
     .el-input {
@@ -511,13 +510,18 @@ watch(() => listQuery.page_size, handlerQuery)
     margin-bottom: 0;
 
     :deep(.el-form-item__content) {
-      display: flex;
+      display: block;
       gap: 10px;
     }
+
   }
 }
 
 @media (max-width: 768px) {
+  :deep(.el-form-item__label) {
+    width: auto !important;
+  }
+
   .dialog-form {
     .el-form-item {
       display: flex;
@@ -529,6 +533,7 @@ watch(() => listQuery.page_size, handlerQuery)
         text-align: left;
         padding: 0;
         margin-bottom: 8px;
+        display: block !important;
       }
 
       :deep(.el-form-item__content) {
@@ -552,7 +557,8 @@ watch(() => listQuery.page_size, handlerQuery)
 
       .btn-block {
         width: 100%;
-        margin: 0;
+        margin: 5px 0px !important;
+        padding: 1.2rem;
       }
     }
   }
@@ -577,6 +583,7 @@ watch(() => listQuery.page_size, handlerQuery)
 
 /* Touch optimization */
 @media (hover: none) and (pointer: coarse) {
+
   .el-button,
   .tag-card {
     -webkit-tap-highlight-color: transparent;
@@ -587,7 +594,7 @@ watch(() => listQuery.page_size, handlerQuery)
 /* Empty state */
 .el-empty {
   padding: 40px 0;
-  
+
   @media (max-width: 768px) {
     padding: 30px 0;
   }

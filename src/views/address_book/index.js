@@ -60,6 +60,13 @@ export function useRepositories(api_type = 'my') {
         }
       }
 
+    // 👇 Aquí imprimimos todos los alias que vienen del backend:
+    console.log('📋 Alias recibidos del backend:')
+    res.data.list.forEach((item, index) => {
+      console.log(`${index + 1}. ${item.alias ?? '(sin alias)'} [id: ${item.id}]`)
+    })
+
+
       let filteredList = res.data.list
 
       if (listQuery.alias && listQuery.alias.trim() !== '') {

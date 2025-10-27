@@ -3,28 +3,19 @@
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
       <div class="mobile-header" v-if="isMobile">
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-        >
-          {{ showFilters ? T('HideFilters') : T('ShowFilters') }}
+        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
+          :icon="showFilters ? ArrowUp : ArrowDown">
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
         </el-button>
       </div>
 
-      <el-form 
-        v-show="!isMobile || showFilters"
-        :inline="!isMobile" 
-        label-width="80px"
-        class="filter-form"
-      >
+      <el-form v-show="!isMobile || showFilters" :inline="!isMobile" label-width="80px" class="filter-form">
         <el-form-item :label="T('Username')" class="form-item-full">
           <el-input v-model="listQuery.username"></el-input>
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="handlerQuery" :class="{ 'btn-block': isMobile }">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
-          <el-button type="success" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button>
+          <el-button type="success" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
+          <el-button type="primary" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -51,8 +42,8 @@
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center" />
         <el-table-column :label="T('Actions')" align="center" width="450">
           <template #default="{ row }">
-            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="warning" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
+            <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button type="primary" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
             <el-button type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
@@ -61,12 +52,7 @@
 
     <!-- Mobile Card View -->
     <div v-else class="mobile-list" v-loading="listRes.loading">
-      <el-card 
-        v-for="row in listRes.list" 
-        :key="row.id" 
-        class="user-card" 
-        shadow="hover"
-      >
+      <el-card v-for="row in listRes.list" :key="row.id" class="user-card" shadow="hover">
         <div class="card-header">
           <div class="user-info">
             <div class="user-avatar">
@@ -80,13 +66,8 @@
             </div>
           </div>
           <div class="user-status">
-            <el-switch 
-              v-model="row.status" 
-              :active-value="ENABLE_STATUS" 
-              :inactive-value="DISABLE_STATUS"
-              @change="changeStatus(row)"
-              size="small"
-            />
+            <el-switch v-model="row.status" :active-value="ENABLE_STATUS" :inactive-value="DISABLE_STATUS"
+              @change="changeStatus(row)" size="small" />
           </div>
         </div>
 
@@ -95,7 +76,7 @@
             <span class="label">{{ T('Group') }}:</span>
             <span class="value">
               <el-tag size="small" v-if="row.group_id">
-                {{ listRes.groups?.find(g => g.id === row.group_id)?.name }}
+                {{listRes.groups?.find(g => g.id === row.group_id)?.name}}
               </el-tag>
               <span v-else>-</span>
             </span>
@@ -103,10 +84,7 @@
           <div class="info-row">
             <span class="label">{{ T('Status') }}:</span>
             <span class="value">
-              <el-tag 
-                :type="row.status === ENABLE_STATUS ? 'success' : 'danger'" 
-                size="small"
-              >
+              <el-tag :type="row.status === ENABLE_STATUS ? 'success' : 'danger'" size="small">
                 {{ row.status === ENABLE_STATUS ? T('Enabled') : T('Disabled') }}
               </el-tag>
             </span>
@@ -122,10 +100,10 @@
         </div>
 
         <div class="card-actions">
-          <el-button @click="toEdit(row)" size="small" class="action-btn">
+          <el-button type="warning" @click="toEdit(row)" size="small" class="action-btn">
             {{ T('Edit') }}
           </el-button>
-          <el-button type="warning" @click="changePass(row)" size="small" class="action-btn">
+          <el-button type="primary" @click="changePass(row)" size="small" class="action-btn">
             {{ T('ResetPassword') }}
           </el-button>
           <el-button type="danger" @click="remove(row)" size="small" class="action-btn">
@@ -139,15 +117,9 @@
 
     <!-- Pagination -->
     <el-card class="list-page" shadow="hover">
-      <el-pagination 
-        background 
-        :layout="isMobile ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'" 
-        :page-sizes="[10, 20, 50, 100]"
-        v-model:page-size="listQuery.page_size" 
-        v-model:current-page="listQuery.page" 
-        :total="listRes.total"
-        :small="isMobile"
-      />
+      <el-pagination background :layout="isMobile ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'"
+        :page-sizes="[10, 20, 50, 100]" v-model:page-size="listQuery.page_size" v-model:current-page="listQuery.page"
+        :total="listRes.total" :small="isMobile" />
     </el-card>
   </div>
 </template>
@@ -209,6 +181,25 @@ const changeStatus = async (row) => {
     getList(listQuery)
   }
 }
+
+// Al inicio del script, después de las importaciones
+const debounce = (fn, delay) => {
+  let timeoutId
+  return (...args) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn(...args), delay)
+  }
+}
+
+// Usar el debounce
+const debouncedSearch = debounce(() => {
+  listQuery.page = 1
+  getList()
+}, 300)
+
+watch(() => listQuery.username, () => {
+  debouncedSearch()
+})
 </script>
 
 <style scoped lang="scss">
@@ -232,9 +223,10 @@ const changeStatus = async (row) => {
 
   .mobile-header {
     margin-bottom: 15px;
-    
+
     .filter-toggle {
       width: 100%;
+      padding: 1.2rem;
     }
   }
 
@@ -242,8 +234,21 @@ const changeStatus = async (row) => {
     .el-form-item {
       display: block;
       margin-bottom: 15px;
-      
+      width: 100%;
+
       &.form-item-full {
+        width: 100%;
+      }
+
+      // Asegurar que el label no reduzca el espacio del input
+      :deep(.el-form-item__label) {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 5px;
+      }
+
+      :deep(.el-form-item__content) {
+        margin-left: 0 !important;
         width: 100%;
       }
     }
@@ -257,6 +262,13 @@ const changeStatus = async (row) => {
       flex-direction: column;
       gap: 10px;
       width: 100%;
+      margin-left: 0 !important;
+
+      .el-button {
+        width: 100%;
+        margin: 0.4rem 0 !important;
+        padding: 1.2rem;
+      }
 
       .btn-block {
         width: 100%;
@@ -267,7 +279,7 @@ const changeStatus = async (row) => {
 
   .list-page {
     margin-top: 10px;
-    
+
     .el-pagination {
       display: flex;
       justify-content: center;
@@ -279,7 +291,7 @@ const changeStatus = async (row) => {
 /* Mobile Card List */
 .mobile-list {
   margin-top: 10px;
-  
+
   .user-card {
     margin-bottom: 12px;
     transition: all 0.3s ease;
@@ -306,18 +318,18 @@ const changeStatus = async (row) => {
       align-items: center;
       gap: 12px;
       flex: 1;
+      color: white !important;
 
       .user-avatar {
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #111216 0%, #696969 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
       }
 
       .user-details {
@@ -329,14 +341,14 @@ const changeStatus = async (row) => {
 
         .user-name {
           font-size: 16px;
-          color: #303133;
+          color: #ffffff !important;
           font-weight: 600;
           word-break: break-word;
         }
 
         .user-id {
           font-size: 12px;
-          color: #909399;
+          color: #e0e0e0;
         }
       }
     }
@@ -393,6 +405,9 @@ const changeStatus = async (row) => {
       width: 100%;
       margin: 0;
       justify-content: center;
+      padding: 1.2rem;
+      font-size: 1rem !important;
+
     }
   }
 }
@@ -428,6 +443,7 @@ const changeStatus = async (row) => {
 
 /* Touch optimization */
 @media (hover: none) and (pointer: coarse) {
+
   .el-button,
   .user-card {
     -webkit-tap-highlight-color: transparent;
@@ -438,7 +454,7 @@ const changeStatus = async (row) => {
 /* Empty state */
 .el-empty {
   padding: 40px 0;
-  
+
   @media (max-width: 768px) {
     padding: 30px 0;
   }
