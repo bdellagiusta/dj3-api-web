@@ -27,7 +27,7 @@
             <template #default="{row}">
               <template v-if="row.id>0">
                 <!-- Botón para editar -->
-                <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
+                <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
                 <!-- Botón para eliminar -->
                 <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
               </template>

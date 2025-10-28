@@ -474,7 +474,7 @@ const clearFilters = () => {
     gap: 8px;
     flex-wrap: wrap;
 
-    .acti on-btn-full {
+    .action-btn-full {
       flex: 1 1 100%;
     }
 

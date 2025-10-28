@@ -139,13 +139,13 @@ export const asyncRoutes = [
         meta: { title: 'UserEdit', hide: true },
         component: () => import('@/views/user/edit.vue'),
       },
-      {
-        path: 'addressBookName',
-        name: 'UserAddressBookName',
-        meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
-        component: () => import('@/views/my/address_book/collection.vue'),
-        //component: () => import('@/views/address_book/collection.vue'),
-      },
+      // {
+      //   path: 'addressBookName',
+      //   name: 'UserAddressBookName',
+      //   meta: { title: 'AddressBookNameManage', icon: 'Collection' /*keepAlive: true*/ },
+      //   component: () => import('@/views/my/address_book/collection.vue'),
+      //   //component: () => import('@/views/address_book/collection.vue'),
+      // },
 
 
       // {
@@ -160,30 +160,30 @@ export const asyncRoutes = [
         meta: { title: 'UserToken', icon: 'Ticket' /*keepAlive: true*/ },
         component: () => import('@/views/user/token.vue'),
       },
-      {
-        path: '/loginLog',
-        name: 'LoginLog',
-        meta: { title: 'LoginLog', icon: 'List' /*keepAlive: true*/ },
-        component: () => import('@/views/login/log.vue'),
-      },
-      {
-        path: '/auditConn',
-        name: 'AuditConn',
-        meta: { title: 'AuditConnLog', icon: 'Tickets' /*keepAlive: true*/ },
-        component: () => import('@/views/audit/connList.vue'),
-      },
-      {
-        path: '/auditFile',
-        name: 'AuditFile',
-        meta: { title: 'AuditFileLog', icon: 'Files' /*keepAlive: true*/ },
-        component: () => import('@/views/audit/fileList.vue'),
-      },
-      {
-        path: '/shareRecord',
-        name: 'ShareRecord',
-        meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
-        component: () => import('@/views/share_record/index.vue'),
-      },
+      // {
+      //   path: '/loginLog',
+      //   name: 'LoginLog',
+      //   meta: { title: 'LoginLog', icon: 'List' /*keepAlive: true*/ },
+      //   component: () => import('@/views/login/log.vue'),
+      // },
+      // {
+      //   path: '/auditConn',
+      //   name: 'AuditConn',
+      //   meta: { title: 'AuditConnLog', icon: 'Tickets' /*keepAlive: true*/ },
+      //   component: () => import('@/views/audit/connList.vue'),
+      // },
+      // {
+      //   path: '/auditFile',
+      //   name: 'AuditFile',
+      //   meta: { title: 'AuditFileLog', icon: 'Files' /*keepAlive: true*/ },
+      //   component: () => import('@/views/audit/fileList.vue'),
+      // },
+      // {
+      //   path: '/shareRecord',
+      //   name: 'ShareRecord',
+      //   meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },
+      //   component: () => import('@/views/share_record/index.vue'),
+      // },
       // {
       //   path: '/serverCmd',
       //   name: 'ServerCmd',
