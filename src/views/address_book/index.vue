@@ -4,7 +4,6 @@
     <el-card class="list-query" shadow="hover">
       <div class="mobile-header" v-if="isMobile">
         <div class="filter-title">
-          <el-icon class="filter-icon"><Filter /></el-icon>
           <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
         </div>
         <el-button 
@@ -583,7 +582,7 @@ const handleCurrentChange = (val) => {
   .el-button{
         width: 100%;
         margin: 0.4rem 0 !important;
-        padding: 1.2rem;
+        padding: 1.1rem;
   }
   .add-button {
     width: 100%;

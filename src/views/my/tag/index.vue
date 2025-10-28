@@ -272,6 +272,7 @@ onMounted(async () => {
     
     .filter-toggle {
       width: 100%;
+      padding: 1.1rem;
     }
   }
 

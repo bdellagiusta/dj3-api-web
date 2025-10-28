@@ -5,7 +5,6 @@
 
       <div class="mobile-header" v-if="isMobile">
         <div class="filter-title">
-          <el-icon class="filter-icon"><Filter /></el-icon>
           <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
         </div>
         <el-button 
@@ -24,7 +23,13 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
       <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
     </el-form-item>
 
-    <el-form-item :label="T('Badge')">
+    <el-form-item v-if="isHiperdino" :label="T('Badge')">
+      <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
+        <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
+        <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item :label="T('Group')">
       <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
         <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
         <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
@@ -70,20 +75,26 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="collection_id" :label="T('Insignia')" align="center" width="250">
+        <el-table-column prop="collection_id" :label="T('Group')" align="center" width="250">
           <template #default="{ row }">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column v-if="isAdmin" prop="platform" :label="T('Platform')" align="center" width="250" />
+        <el-table-column v-if="isHiperdino"  prop="collection_id" :label="T('Insignia')" align="center" width="250">
+          <template #default="{ row }">
+            <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
+            <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column v-if="isAdmin" prop="platform" :label="T('Platform')" align="center" width="250" /> -->
         <el-table-column prop="tags" v-if="!isAdmin" :label="T('Island')" align="center" width="250" />
         <el-table-column prop="tags" v-if="isAdmin" :label="T('Tags')" align="center" width="250" />
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" fixed="right" width="250">
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="300" fixed="right" >
           <template #default="{ row }">
             <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
             <template v-if="isAdmin">
-              <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
+              <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
               <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
             </template>
           </template>
@@ -140,7 +151,7 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
             {{ T('Link') }}
           </el-button>
           <template v-if="isAdmin">
-            <el-button @click="toEdit(row)" class="action-btn">{{ T('Edit') }}</el-button>
+            <el-button type="warning" @click="toEdit(row)" class="action-btn">{{ T('Edit') }}</el-button>
             <el-button type="danger" @click="del(row)" class="action-btn">{{ T('Delete') }}</el-button>
           </template>
         </div>
@@ -212,8 +223,8 @@ import { T } from '@/utils/i18n'
 import { useAppStore } from '@/store/app'
 import { connectByClient } from '@/utils/peer'
 import { handleClipboard } from '@/utils/clipboard'
-import { CopyDocument } from '@element-plus/icons'
 import PlatformIcons from '@/components/icons/platform.vue'
+import { CopyDocument, ArrowDown, ArrowUp} from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 
@@ -458,12 +469,12 @@ const clearFilters = () => {
     }
   }
 
-  .mobile-card-actions {
+ .mobile-card-actions {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 
-    .action-btn-full {
+    .acti on-btn-full {
       flex: 1 1 100%;
     }
 
@@ -478,6 +489,9 @@ const clearFilters = () => {
   .title {
     font-size: 1.5rem;
     padding-bottom: 1rem;
+  }
+  .el-button{
+    padding: 1.1rem;
   }
 
   .list-query {
@@ -529,7 +543,8 @@ const clearFilters = () => {
 
             .el-button {
               flex: 1;
-              margin: 4px;
+              padding: 1.2rem;
+              margin-left: 0 !important;
               min-width: 45%;
             }
 
@@ -541,7 +556,12 @@ const clearFilters = () => {
             }
           }
         }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
 
+    }
         .form-actions-mobile {
           width: 100%;
 
@@ -633,4 +653,8 @@ const clearFilters = () => {
       }
     }
   }
+              .el-button {
+              margin-left:0 !important;
+    
+            }
 </style>

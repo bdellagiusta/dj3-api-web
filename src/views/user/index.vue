@@ -131,7 +131,7 @@ import { DISABLE_STATUS, ENABLE_STATUS } from '@/utils/common_options'
 import { update } from '@/api/user'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { onMounted, watch, ref } from 'vue'
-import { Avatar } from '@element-plus/icons-vue'
+import { CopyDocument, Avatar , Delete, Plus, ArrowDown, ArrowUp} from '@element-plus/icons-vue'
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -217,6 +217,9 @@ watch(() => listQuery.username, () => {
 
 /* Mobile Styles */
 @media (max-width: 768px) {
+  .el-button{
+    padding: 1.1rem;
+  }
   .users-container {
     padding: 5px;
   }
@@ -226,7 +229,6 @@ watch(() => listQuery.username, () => {
 
     .filter-toggle {
       width: 100%;
-      padding: 1.2rem;
     }
   }
 
@@ -267,7 +269,6 @@ watch(() => listQuery.username, () => {
       .el-button {
         width: 100%;
         margin: 0.4rem 0 !important;
-        padding: 1.2rem;
       }
 
       .btn-block {
@@ -405,7 +406,6 @@ watch(() => listQuery.username, () => {
       width: 100%;
       margin: 0;
       justify-content: center;
-      padding: 1.2rem;
       font-size: 1rem !important;
 
     }

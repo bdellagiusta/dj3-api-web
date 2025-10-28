@@ -7,7 +7,7 @@
         <el-form inline label-width="80px">
           <el-form-item>
             <!-- Botón para agregar un nuevo registro -->
-            <el-button type="danger" @click="toAdd">{{ T('Add') }}</el-button>
+            <el-button type="primary" @click="toAdd">{{ T('Add') }}</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -53,7 +53,7 @@
       <!-- Barra de acciones superior -->
       <div class="mobile-actions">
       
-        <el-button type="primary" size="small" @click="toAdd" class="action-btn">
+        <el-button type="primary"  @click="toAdd" class="action-btn-full">
           {{ T('Add') }}
         </el-button>
       </div>
@@ -79,10 +79,10 @@
           </div>
 
           <div v-if="item.id > 0" class="card-actions">
-            <el-button type="primary" size="small" @click="toEdit(item)">
+            <el-button type="warning"  class="action-btn"  @click="toEdit(item)">
               {{ T('Edit') }}
             </el-button>
-            <el-button type="danger" size="small" @click="del(item)">
+            <el-button type="danger" class="action-btn" @click="del(item)">
               {{ T('Delete') }}
             </el-button>
           </div>
@@ -210,27 +210,16 @@ window.addEventListener('resize', () => {
 
 // Estilos modo oscuro para versión escritorio
 .desktop-version {
-  :deep(.el-card) {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-    color: #e0e0e0;
-  }
+
 
   :deep(.el-table) {
     background-color: #2a2a2a;
     color: #e0e0e0;
-
-    th, td {
-      background-color: #2a2a2a;
-      border-color: #3a3a3a;
-      color: #e0e0e0;
-    }
-
-    tr {
-      background-color: #2a2a2a;
-
-      &:hover > td {
-        background-color: #333333 !important;
+    .el-table__header, .el-table__body {
+      .el-table__row {
+        &:hover {
+          background-color: #3a3a3a;
+        }
       }
     }
   }
@@ -274,6 +263,11 @@ window.addEventListener('resize', () => {
   .mobile-version {
     display: block;
   }
+  .el-button{
+  padding: 1.1rem;
+  font-size: 0.9rem;
+  width: 100%;
+}
 }
 
 // Estilos versión móvil con modo oscuro
@@ -283,24 +277,25 @@ window.addEventListener('resize', () => {
   min-height: 100vh;
 }
 
-.mobile-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  background: #2a2a2a;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 
-  .action-btn {
-    flex: 1;
-    width: 100%;
-    padding: 7px 0;
-    margin: 0 0px 0 0px !important;
+ .mobile-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  
+
+    .action-btn-full {
+      flex: 1 1 100%;
+    }
+
+    .action-btn {
+      flex: 1;
+      width: 100%;
+
+    }
   }
-}
+
+
 
 .mobile-list {
   padding: 10px;
@@ -332,21 +327,21 @@ window.addEventListener('resize', () => {
       margin-bottom: 12px;
     }
     
-    .card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      
-     .el-button {
-        padding: 1px 0;
-        flex: 1;
-        min-width: 100%;
-        margin: 0 !important;
-        
-        &:first-child {
-          flex-basis: 100%;
-        } }
-    }
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  text-align: center;
+  
+  .el-button {
+    flex: 1;
+    min-width: calc(50% - 4px); // 50% menos la mitad del gap
+    margin: 0 !important;
+        width: 100% !important;
+
+  }
+}
+
   }
 }
 

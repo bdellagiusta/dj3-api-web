@@ -314,7 +314,7 @@ watch(() => listQuery.page_size, handlerQuery)
       .el-button {
         width: 100%;
         margin: 0.4rem 0 !important;
-        padding: 1.2rem;
+        padding: 1.1rem;
       }
 
       .btn-block {
@@ -435,7 +435,7 @@ watch(() => listQuery.page_size, handlerQuery)
       }
 
       .value {
-        color: #606266;
+        color: #eaf0ff;
         flex: 1;
         text-align: right;
         word-break: break-all;
@@ -450,7 +450,7 @@ watch(() => listQuery.page_size, handlerQuery)
           .color-code {
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            background: #f5f7fa;
+            background: #000000;
             padding: 2px 6px;
             border-radius: 3px;
           }
@@ -482,7 +482,7 @@ watch(() => listQuery.page_size, handlerQuery)
       width: 100%;
       margin: 0;
       font-size: 0.9rem;
-      padding: 1.2rem;
+      padding: 1.1rem;
     }
   }
 }

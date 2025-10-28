@@ -3,10 +3,6 @@
     <!-- Filter Card with Modern Design -->
     <el-card class="list-query" shadow="hover">
       <div class="mobile-header" v-if="isMobile">
-        <div class="filter-title">
-          <el-icon class="filter-icon"><Filter /></el-icon>
-          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
-        </div>
         <el-button 
           class="filter-toggle" 
           type="primary" 
@@ -248,7 +244,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { T } from '@/utils/i18n'
 import { timeAgo } from '@/utils/time'
 import { connectByClient } from '@/utils/peer'
-import { ArrowDown, ArrowUp, CopyDocument, Delete, Plus } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowUp, CopyDocument } from '@element-plus/icons-vue'
 import { handleClipboard } from '@/utils/clipboard'
 import createABForm from '@/views/peer/createABForm.vue'
 

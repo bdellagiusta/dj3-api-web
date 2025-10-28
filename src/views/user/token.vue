@@ -1,25 +1,54 @@
 <template>
-  <div>
+  <div class="token-management">
     <el-card class="list-query" shadow="hover">
-      <el-form inline label-width="80px">
-        <el-form-item :label="T('User')">
+      <div class="mobile-header" v-if="isMobile">
+        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
+          :icon="showFilters ? ArrowUp : ArrowDown">
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+        </el-button>
+      </div>
+
+
+      <!-- Formulario de filtros -->
+      <el-form 
+        inline 
+        label-width="80px" 
+        class="query-form"
+        :class="{ 'hidden-filters': isMobile && !showFilters }"
+      >
+        <el-form-item :label="T('User')" class="form-item-responsive">
           <el-select v-model="listQuery.user_id" clearable>
-            <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
+            <el-option 
+              v-for="item in allUsers" 
+              :key="item.id" 
+              :label="item.username" 
+              :value="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="form-item-responsive">
           <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
           <el-button type="danger" @click="toBatchDelete">{{ T('BatchDelete') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
+    
     <el-card class="list-body" shadow="hover">
-      <el-table :data="listRes.list" v-loading="listRes.loading" border @selection-change="handleSelectionChange">
+      <!-- Vista de tabla para desktop -->
+      <el-table 
+        :data="listRes.list" 
+        v-loading="listRes.loading" 
+        border 
+        @selection-change="handleSelectionChange"
+        class="desktop-table"
+      >
         <el-table-column type="selection" align="center" width="50" />
         <el-table-column prop="id" label="id" align="center" width="100" />
         <el-table-column :label="T('Owner')" align="center">
           <template #default="{ row }">
-            <span v-if="row.user_id"> <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> </span>
+            <span v-if="row.user_id"> 
+              <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> 
+            </span>
           </template>
         </el-table-column>
         <el-table-column :label="T('Token')" align="center">
@@ -30,8 +59,9 @@
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center" />
         <el-table-column :label="T('ExpireTime')" prop="expired_at" align="center">
           <template #default="{ row }">
-            <el-tag :type="expired(row) ? 'info' : 'success'">{{ row.expired_at ? new Date(row.expired_at *
-              1000).toLocaleString() : '-' }}</el-tag>
+            <el-tag :type="expired(row) ? 'info' : 'success'">
+              {{ row.expired_at ? new Date(row.expired_at * 1000).toLocaleString() : '-' }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="T('Actions')" align="center" width="400">
@@ -40,20 +70,78 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- Vista de cards para móvil -->
+      <div class="mobile-cards" v-loading="listRes.loading">
+        <div v-for="row in listRes.list" :key="row.id" class="mobile-card">
+          <div class="card-header">
+            <el-checkbox 
+              :model-value="multipleSelection.some(item => item.id === row.id)"
+              @change="toggleSelection(row)"
+            />
+            <span class="card-id">ID: {{ row.id }}</span>
+          </div>
+          
+          <div class="card-content">
+            <div class="card-row">
+              <span class="label">{{ T('Owner') }}:</span>
+              <el-tag v-if="row.user_id">
+                {{ allUsers?.find(u => u.id === row.user_id)?.username }}
+              </el-tag>
+            </div>
+            
+            <div class="card-row">
+              <span class="label">{{ T('Token') }}:</span>
+              <span class="token-value">{{ maskToken(row.token) }}</span>
+            </div>
+            
+            <div class="card-row">
+              <span class="label">{{ T('CreatedAt') }}:</span>
+              <span>{{ row.created_at }}</span>
+            </div>
+            
+            <div class="card-row">
+              <span class="label">{{ T('ExpireTime') }}:</span>
+              <el-tag :type="expired(row) ? 'info' : 'success'">
+                {{ row.expired_at ? new Date(row.expired_at * 1000).toLocaleString() : '-' }}
+              </el-tag>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <el-button type="danger" @click="del(row)">
+              {{ T('Logout') }}
+            </el-button>
+          </div>
+        </div>
+        
+        <div v-if="!listRes.list || listRes.list.length === 0" class="empty-state">
+          {{ T('NoData') || 'No data available' }}
+        </div>
+      </div>
     </el-card>
+    
     <el-card class="list-page" shadow="hover">
-      <el-pagination background layout="prev, pager, next, sizes, jumper" :page-sizes="[10, 20, 50, 100]"
-        v-model:page-size="listQuery.page_size" v-model:current-page="listQuery.page" :total="listRes.total">
+      <el-pagination 
+        background 
+        layout="prev, pager, next, sizes, jumper" 
+        :page-sizes="[10, 20, 50, 100]"
+        v-model:page-size="listQuery.page_size" 
+        v-model:current-page="listQuery.page" 
+        :total="listRes.total"
+        class="pagination-responsive"
+      >
       </el-pagination>
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { onActivated, onMounted, ref, watch } from 'vue'
+import { computed, onActivated, onMounted, onUnmounted, ref, watch } from 'vue'
 import { loadAllUsers } from '@/global'
 import { useRepositories } from '@/views/user/token.js'
 import { T } from '@/utils/i18n'
+import {  ArrowDown,ArrowUp } from '@element-plus/icons-vue'
 
 const { allUsers, getAllUsers } = loadAllUsers()
 getAllUsers()
@@ -71,30 +159,314 @@ onMounted(getList)
 onActivated(getList)
 
 watch(() => listQuery.page, getList)
-
 watch(() => listQuery.page_size, handlerQuery)
+
 const maskToken = (token) => {
   return token.slice(0, 4) + '****' + token.slice(-4)
 }
+
 const expired = (row) => {
   const now = new Date().getTime()
   return row.expired_at * 1000 < now
 }
 
 const multipleSelection = ref([])
+
 const handleSelectionChange = (val) => {
   multipleSelection.value = val
 }
+
+const toggleSelection = (row) => {
+  const index = multipleSelection.value.findIndex(item => item.id === row.id)
+  if (index > -1) {
+    multipleSelection.value.splice(index, 1)
+  } else {
+    multipleSelection.value.push(row)
+  }
+}
+
 const toBatchDelete = () => {
   if (multipleSelection.value.length === 0) {
     return
   }
   batchDelete(multipleSelection.value.map(v => v.id))
 }
+
+// Control de filtros móviles
+const showFilters = ref(false)
+const windowWidth = ref(window.innerWidth)
+
+const isMobile = computed(() => windowWidth.value <= 768)
+
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (listQuery.user_id) count++
+  return count
+})
+
+const handleResize = () => {
+  windowWidth.value = window.innerWidth
+  // Mostrar filtros automáticamente en desktop
+  if (!isMobile.value) {
+    showFilters.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped lang="scss">
-.list-query .el-select {
-  --el-select-width: 160px;
+.token-management {
+  padding: 0;
+}
+
+.list-query {
+  margin-bottom: 16px;
+
+  // Header móvil
+  .mobile-header {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--el-border-color-light);
+
+    .filter-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .filter-icon {
+        font-size: 18px;
+        color: var(--el-color-primary);
+      }
+
+      .filter-text {
+        font-weight: 500;
+        color: var(--el-text-color-primary);
+        font-size: 15px;
+      }
+
+      .filter-badge {
+        :deep(.el-badge__content) {
+          transform: translateY(-50%) translateX(50%);
+        }
+      }
+    }
+
+    .filter-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 16px;
+
+      .toggle-icon {
+        transition: transform 0.3s ease;
+        font-size: 14px;
+
+        &.rotate {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+
+  .el-select {
+    --el-select-width: 160px;
+  }
+}
+
+// Ocultar filtros cuando está colapsado
+.hidden-filters {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  margin: 0 !important;
+}
+
+.query-form:not(.hidden-filters) {
+  max-height: 500px;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+// Vista móvil por defecto (ocultar tabla, mostrar cards)
+.desktop-table {
+  display: table;
+}
+
+.mobile-cards {
+  display: none;
+}
+
+// Responsive para tablets y móviles
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex !important;
+  }
+
+  .desktop-table {
+    display: none;
+  }
+
+  .el-select {
+    --el-select-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .el-button {
+    margin-left: 0px !important;
+    width: 100%;
+    padding: 1.1rem;
+    font-size: 0.9rem;
+  }
+  
+  .mobile-cards {
+    display: block;
+    padding: 10px 0;
+  }
+  
+  .mobile-card {
+    background: var(--el-bg-color);
+    border: 1px solid var(--el-border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--el-border-color-light);
+      
+      .card-id {
+        font-weight: 600;
+        color: var(--el-text-color-primary);
+        font-size: 14px;
+      }
+    }
+    
+    .card-content {
+      .card-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+        
+        .label {
+          font-weight: 500;
+          color: var(--el-text-color-regular);
+          font-size: 13px;
+          min-width: 90px;
+        }
+        
+        .token-value {
+          font-family: monospace;
+          font-size: 12px;
+          color: var(--el-text-color-primary);
+        }
+      }
+    }
+    
+    .card-actions {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--el-border-color-light);
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--el-text-color-secondary);
+  }
+  
+  // Formulario responsive
+  .query-form {
+    display: flex;
+    flex-direction: column;
+    
+    .form-item-responsive {
+      width: 100%;
+      margin-right: 0 !important;
+      
+      .el-select {
+        width: 100% !important;
+        --el-select-width: 100% !important;
+      }
+      
+      .el-button {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+    }
+  }
+  
+  // Paginación responsive
+  .pagination-responsive {
+    :deep(.el-pagination) {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      
+      .el-pagination__sizes {
+        margin: 0;
+      }
+      
+      .el-pagination__jump {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+// Responsive para móviles pequeños
+@media (max-width: 480px) {
+  .list-query,
+  .list-body,
+  .list-page {
+    margin: 8px;
+  }
+  
+  .mobile-card {
+    padding: 12px;
+    
+    .card-row {
+      font-size: 12px;
+      
+      .label {
+        font-size: 12px;
+        min-width: 80px;
+      }
+    }
+  }
+  
+  .pagination-responsive {
+    :deep(.el-pagination) {
+      .btn-prev,
+      .btn-next,
+      .el-pager li {
+        min-width: 28px;
+        height: 28px;
+        line-height: 28px;
+      }
+    }
+  }
 }
 </style>
