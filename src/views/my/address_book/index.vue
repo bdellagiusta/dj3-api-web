@@ -3,19 +3,23 @@
     <el-card class="list-query" shadow="hover">
       <h1 v-if="isHiperdino" class="title">Circuito de pantallas Canal Dino TV</h1>
 
-      <div class="mobile-header" v-if="isMobile">
-        <div class="filter-title">
-          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
-        </div>
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown"
-        >
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    color="#8B5CF6"
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
+
   <el-form     :inline="!isMobile" 
 label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobile && !showFilters }">
 
@@ -53,7 +57,7 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
     </el-form-item>
 
         <el-form-item class="form-actions">
-          <el-button type="danger" @click="clearFilters" :class="isMobile ? 'mobile-clear-btn' : 'desktop-clear-btn'">{{ T('Clear Filters') }}</el-button>
+          <el-button type="danger" :icon="RefreshLeft" @click="clearFilters" :class="isMobile ? 'mobile-clear-btn' : 'desktop-clear-btn'">{{ T('Clear Filters') }}</el-button>
         </el-form-item>
 
       </el-form>
@@ -90,12 +94,12 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
         <!-- <el-table-column v-if="isAdmin" prop="platform" :label="T('Platform')" align="center" width="250" /> -->
         <el-table-column prop="tags" v-if="!isAdmin" :label="T('Island')" align="center" width="250" />
         <el-table-column prop="tags" v-if="isAdmin" :label="T('Tags')" align="center" width="250" />
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="300" fixed="right" >
-          <template #default="{ row }">
-            <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right" >
+           <template #default="{ row }">
+            <el-button type="success" :icon="Link" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
             <template v-if="isAdmin">
-              <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
-              <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+              <el-button type="warning" :icon="Edit" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+              <el-button type="danger" :icon="DeleteFilled" @click="del(row)">{{ T('Delete') }}</el-button>
             </template>
           </template>
         </el-table-column>
@@ -147,12 +151,12 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
 
 
         <div class="mobile-card-actions">
-          <el-button type="success" @click="connectByClient(row.id)" class="action-btn-full">
+          <el-button type="success"  :icon="Link" @click="connectByClient(row.id)" class="action-btn-full">
             {{ T('Link') }}
           </el-button>
           <template v-if="isAdmin">
-            <el-button type="warning" @click="toEdit(row)" class="action-btn">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)" class="action-btn">{{ T('Delete') }}</el-button>
+            <el-button type="warning"  :icon="Edit"  @click="toEdit(row)" class="action-btn">{{ T('Edit') }}</el-button>
+            <el-button type="danger"  :icon="DeleteFilled" @click="del(row)" class="action-btn">{{ T('Delete') }}</el-button>
           </template>
         </div>
       </el-card>
@@ -224,7 +228,7 @@ import { useAppStore } from '@/store/app'
 import { connectByClient } from '@/utils/peer'
 import { handleClipboard } from '@/utils/clipboard'
 import PlatformIcons from '@/components/icons/platform.vue'
-import { CopyDocument, ArrowDown, ArrowUp} from '@element-plus/icons-vue'
+import { CopyDocument, ArrowDown, ArrowUp, Edit, Delete, Link, View, Hide, Filter, RefreshLeft, Remove, DeleteFilled } from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 
@@ -377,8 +381,7 @@ const clearFilters = () => {
       flex-wrap: wrap;
 
       .el-form-item {
-        margin-right: 16px;
-        margin-bottom: 16px;
+        margin-top: 16px;
       }
 
       .form-actions {
@@ -507,7 +510,7 @@ const clearFilters = () => {
           .el-form-item__label {
             width: 100% !important;
             text-align: center !important;
-            margin-bottom: 8px;
+            margin-top: 15px;
             justify-content: center !important;
             display: flex !important;
           }
@@ -637,19 +640,28 @@ const clearFilters = () => {
       }
     }
   }
-    .filter-toggle {
-      width: 100%;
-      margin-bottom: 2rem;
+  .filter-toggle {
+    width: 100%;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {
     .el-form-item {
       display: block;
-      margin-bottom: 0px;
+      margin: 5px 0;
+      width: 100%;
       
       &.form-item-full {
         width: 100%;
+      }
+    :deep(.el-form-item__label) {
+        width: 100%;
+        text-align: left;
       }
     }
   }

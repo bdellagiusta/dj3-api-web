@@ -2,54 +2,56 @@
   <div class="address-book-container">
     <!-- Filter Card with Modern Design -->
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <div class="filter-title">
-          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
-        </div>
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown"
-        >
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    color="#8B5CF6"
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
       <el-form 
     :inline="!isMobile" 
     label-width="100px" 
     :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobile && !showFilters }"
   >
-    <el-form-item :label="T('Owner')">
-      <el-select v-model="listQuery.user_id" clearable @change="handlerQuery">
+       <el-form-item :label="T('Owner')">
+      <el-select v-model="listQuery.user_id" clearable>
         <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item :label="T('Badge')">
-      <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
+      <el-select v-model="listQuery.collection_id" clearable>
         <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
         <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
       </el-select>
     </el-form-item>
 
     <el-form-item :label="T('Name')">
-      <el-input v-model="listQuery.alias" clearable @clear="handlerQuery" @keyup.enter="handlerQuery"></el-input>
+      <el-input v-model="listQuery.alias" clearable @input="debouncedHandlerQuery"></el-input>
     </el-form-item>
 
     <el-form-item :label="T('Tags')">
-      <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')"
-        @change="handlerQuery">
+      <el-select v-model="listQuery.tag_id" clearable filterable :placeholder="T('Select tags')">
         <el-option v-for="t in [...new Map(tagListRes.list.map(i => [i.name, i])).values()]" :key="t.id"
           :label="t.name" :value="t.name" />
       </el-select>
     </el-form-item>
 
     <el-form-item :class="{ 'full-width-button': isMobile }">
-      <el-button type="success" @click="toAdd" class="add-button">{{ T('Add') }}</el-button>
+      <el-button type="primary" :icon="CirclePlusFilled" @click="toAdd" class="add-button">{{ T('Add') }}</el-button>
     </el-form-item>        
     <el-form-item class="form-actions">
-          <el-button type="danger" @click="clearFilters" class="add-button">{{ T('Clear Filters') }}</el-button>
+          <el-button type="danger" :icon="RefreshLeft" @click="clearFilters" class="add-button">{{ T('Clear Filters') }}</el-button>
     </el-form-item>
 
   </el-form>
@@ -58,7 +60,9 @@
 <!-- Desktop Table View -->
 <el-card class="list-body desktop-view" shadow="hover" v-if="!isMobile">
   <el-table :data="listRes.list" v-loading="listRes.loading" border>
-    <el-table-column prop="alias" :label="T('Name')" align="center" />
+        <el-table-column prop="alias" :label="T('Name')" align="center" />
+
+
     <el-table-column prop="id" label="ID" align="center" width="200">
       <template #default="{ row }">
         <div>
@@ -71,8 +75,7 @@
         </div>
       </template>
     </el-table-column>
-
-    <el-table-column prop="collection_id" :label="T('Name')" align="center" width="150">
+    <el-table-column prop="collection_id" :label="T('Group')" align="center" width="150">
       <template #default="{ row }">
         <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
         <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
@@ -85,7 +88,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column :label="T('Tags')" align="center" width="250">
+    <el-table-column :label="T('Tags')" align="center" width="200">
       <template #default="{ row }">
         <div v-if="row.tags && row.tags.length"
           style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">
@@ -97,11 +100,11 @@
       </template>
     </el-table-column>
 
-    <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="350" fixed="right">
+    <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="400" fixed="right">
       <template #default="{ row }">
-        <el-button type="primary" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-        <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
-        <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+        <el-button type="success" :icon="Link"  @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+        <el-button type="warning" :icon="Edit" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+        <el-button type="danger" :icon="DeleteFilled" @click="del(row)">{{ T('Delete') }}</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -159,13 +162,13 @@
     </div>
 
     <div class="card-actions">
-      <el-button type="primary" @click="connectByClient(row.id)" class="mobile-action-btn">
+      <el-button :icon="Link" type="success" @click="connectByClient(row.id)" class="mobile-action-btn">
         {{ T('Link') }}
       </el-button>
-      <el-button type="warning" @click="toEdit(row)" class="mobile-action-btn">
+      <el-button :icon="Edit"   type="warning" @click="toEdit(row)" class="mobile-action-btn">
         {{ T('Edit') }}
       </el-button>
-      <el-button type="danger" @click="del(row)" class="mobile-action-btn">
+      <el-button :icon="DeleteFilled" type="danger" @click="del(row)" class="mobile-action-btn">
         {{ T('Delete') }}
       </el-button>
     </div>
@@ -201,6 +204,11 @@
     :label-width="isMobile ? 'auto' : '120px'"
     :label-position="isMobile ? 'top' : 'right'"
   >
+
+    <el-form-item :label="T('Name')" prop="alias">
+      <el-input v-model="formData.alias"></el-input>
+    </el-form-item>
+
     <el-form-item :label="T('Owner')" prop="user_id" required>
       <el-select v-model="formData.user_id" @change="changeUserForUpdate">
         <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
@@ -216,22 +224,6 @@
 
     <el-form-item label="ID" prop="id" required>
       <el-input v-model="formData.id"></el-input>
-    </el-form-item>
-
-    <el-form-item :label="T('Username')" prop="username">
-      <el-input v-model="formData.username"></el-input>
-    </el-form-item>
-
-    <el-form-item :label="T('Alias')" prop="alias">
-      <el-input v-model="formData.alias"></el-input>
-    </el-form-item>
-
-    <el-form-item :label="T('Hash')" prop="hash">
-      <el-input v-model="formData.hash"></el-input>
-    </el-form-item>
-
-    <el-form-item :label="T('Hostname')" prop="hostname">
-      <el-input v-model="formData.hostname"></el-input>
     </el-form-item>
 
     <el-form-item :label="T('Platform')" prop="platform">
@@ -273,7 +265,7 @@ import { handleClipboard } from '@/utils/clipboard'
 import PlatformIcons from '@/components/icons/platform.vue'
 import { loadAllUsers } from '@/global'
 import { useResponsive } from '@/composables/useResponsive'
-import { ArrowDown, ArrowUp, CopyDocument, Delete, Plus } from '@element-plus/icons-vue'
+import { CopyDocument, ArrowDown, ArrowUp, Edit,  Link, View, Hide, Filter, RefreshLeft, Remove, DeleteFilled, CirclePlusFilled} from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -320,6 +312,22 @@ onMounted(getTagList)
 onMounted(getCollectionList)
 onActivated(getList)
 
+// Debounce para el input de texto (espera 500ms después de que el usuario deje de escribir)
+let debounceTimer = null
+const debouncedHandlerQuery = () => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  debounceTimer = setTimeout(() => {
+    handlerQuery()
+  }, 500)
+}
+
+// Agregar después de los watch existentes
+watch(() => listQuery.user_id, handlerQuery)
+watch(() => listQuery.collection_id, handlerQuery)
+watch(() => listQuery.tag_id, handlerQuery)
+ 
 watch(() => listQuery.page, getList)
 watch(() => listQuery.page_size, handlerQuery)
 
@@ -332,6 +340,16 @@ const handleSizeChange = (val) => {
 const handleCurrentChange = (val) => {
   listQuery.page = val
   getList()
+}
+
+// Función para limpiar todos los filtros
+const clearFilters = () => {
+  listQuery.alias = ''
+  listQuery.user_id = null  // Agregar esta línea
+  listQuery.collection_id = null
+  listQuery.tag_id = null
+  listQuery.page = 1
+  handlerQuery()  // Cambiar getList() por handlerQuery()
 }
 </script>
 <style scoped lang="scss">
@@ -359,16 +377,19 @@ const handleCurrentChange = (val) => {
       }
     }
   }
-    .filter-toggle {
-      width: 100%;
-      margin-bottom: 2rem;
+  .filter-toggle {
+    width: 100%;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {
     .el-form-item {
       display: block;
-      margin-bottom: 0px;
       
       &.form-item-full {
         width: 100%;
@@ -386,7 +407,7 @@ const handleCurrentChange = (val) => {
 .mobile-form {
   .el-form-item {
     display: block;
-    margin-bottom: 16px;
+    margin: 20px 0;
 
     :deep(.el-form-item__label) {
       width: 100% !important;
@@ -530,15 +551,23 @@ const handleCurrentChange = (val) => {
 
     .card-actions {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 8px;
       padding-top: 12px;
       border-top: 1px solid #ebeef5;
 
       .mobile-action-btn {
-        width: 100%;
         margin: 0 !important;
         min-height: 35px;
+        
+        &:first-child {
+          width: 100%;
+        }
+        
+        &:not(:first-child) {
+          flex: 1;
+          min-width: calc(50% - 4px);
+        }
       }
     }
   }
@@ -581,14 +610,10 @@ const handleCurrentChange = (val) => {
   }  
   .el-button{
         width: 100%;
-        margin: 0.4rem 0 !important;
         padding: 1.1rem;
   }
   .add-button {
     width: 100%;
-  }
-  :first-child.add-button {
-    margin-top: 0.5rem;
   }
   .list-query,
   .list-page {

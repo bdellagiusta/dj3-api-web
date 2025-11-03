@@ -7,7 +7,7 @@
         <el-form inline label-width="80px">
           <el-form-item>
             <!-- Botón para agregar un nuevo registro -->
-            <el-button type="primary" @click="toAdd">{{ T('Add') }}</el-button>
+            <el-button type="primary" :icon="CirclePlusFilled" @click="toAdd">{{ T('Add Group') }}</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -27,9 +27,9 @@
             <template #default="{row}">
               <template v-if="row.id>0">
                 <!-- Botón para editar -->
-                <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+                <el-button :icon="Edit" type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
                 <!-- Botón para eliminar -->
-                <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+                <el-button :icon="DeleteFilled" type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
               </template>
             </template>
           </el-table-column>
@@ -53,8 +53,8 @@
       <!-- Barra de acciones superior -->
       <div class="mobile-actions">
       
-        <el-button type="primary"  @click="toAdd" class="action-btn-full">
-          {{ T('Add') }}
+        <el-button type="primary" :icon="CirclePlusFilled" @click="toAdd" class="action-btn-full">
+          {{ T('Add Group') }}
         </el-button>
       </div>
 
@@ -79,10 +79,10 @@
           </div>
 
           <div v-if="item.id > 0" class="card-actions">
-            <el-button type="warning"  class="action-btn"  @click="toEdit(item)">
+            <el-button :icon="Edit" type="warning"  class="action-btn"  @click="toEdit(item)">
               {{ T('Edit') }}
             </el-button>
-            <el-button type="danger" class="action-btn" @click="del(item)">
+            <el-button  :icon="DeleteFilled" type="danger" class="action-btn" @click="del(item)">
               {{ T('Delete') }}
             </el-button>
           </div>
@@ -144,6 +144,7 @@ import { T } from '@/utils/i18n'
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRepositories } from '@/views/address_book/collection'
 import Rule from '@/views/address_book/rule.vue'
+import { CopyDocument, Edit, DeleteFilled, Link, CirclePlusFilled } from '@element-plus/icons-vue'
 
 const {
   listRes,

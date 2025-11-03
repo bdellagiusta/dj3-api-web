@@ -2,20 +2,30 @@
   <div class="users-container">
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown">
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    color="#8B5CF6"
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
 
       <el-form v-show="!isMobile || showFilters" :inline="!isMobile" label-width="80px" class="filter-form">
         <el-form-item :label="T('Username')" class="form-item-full">
           <el-input v-model="listQuery.username"></el-input>
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="success" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
-          <el-button type="primary" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button>
+          <el-button :icon="CirclePlusFilled" type="primary" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
+          <el-button :icon="Upload" type="success" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -42,9 +52,9 @@
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center" />
         <el-table-column :label="T('Actions')" align="center" width="450">
           <template #default="{ row }">
-            <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="primary" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
-            <el-button type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>
+            <el-button :icon="Edit" type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button :icon="Refresh" type="primary" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
+            <el-button :icon="DeleteFilled" type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,13 +110,13 @@
         </div>
 
         <div class="card-actions">
-          <el-button type="warning" @click="toEdit(row)" size="small" class="action-btn">
+          <el-button type="warning"  :icon="Edit" @click="toEdit(row)" size="small" class="action-btn">
             {{ T('Edit') }}
           </el-button>
-          <el-button type="primary" @click="changePass(row)" size="small" class="action-btn">
+          <el-button type="primary" :icon="Refresh" @click="changePass(row)" size="small" class="action-btn">
             {{ T('ResetPassword') }}
           </el-button>
-          <el-button type="danger" @click="remove(row)" size="small" class="action-btn">
+          <el-button type="danger"  :icon="DeleteFilled" @click="remove(row)" size="small" class="action-btn">
             {{ T('Delete') }}
           </el-button>
         </div>
@@ -131,7 +141,7 @@ import { DISABLE_STATUS, ENABLE_STATUS } from '@/utils/common_options'
 import { update } from '@/api/user'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { onMounted, watch, ref } from 'vue'
-import { CopyDocument, Avatar , Delete, Plus, ArrowDown, ArrowUp} from '@element-plus/icons-vue'
+import { CopyDocument, Avatar , Share, Upload, Delete, Plus, ArrowDown, ArrowUp, CirclePlusFilled, Edit, Refresh, DeleteFilled , Hide, View } from '@element-plus/icons-vue'
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -225,17 +235,21 @@ watch(() => listQuery.username, () => {
   }
 
   .mobile-header {
-    margin-bottom: 15px;
 
-    .filter-toggle {
-      width: 100%;
+  .filter-toggle {
+    width: 100%;
+    padding: 1.2rem;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {
     .el-form-item {
       display: block;
-      margin-bottom: 15px;
       width: 100%;
 
       &.form-item-full {
@@ -246,7 +260,7 @@ watch(() => listQuery.username, () => {
       :deep(.el-form-item__label) {
         width: 100%;
         text-align: left;
-        margin-bottom: 5px;
+        margin-top: 1rem;
       }
 
       :deep(.el-form-item__content) {
@@ -406,7 +420,7 @@ watch(() => listQuery.username, () => {
       width: 100%;
       margin: 0;
       justify-content: center;
-      font-size: 1rem !important;
+      font-size: 0.9rem !important;
 
     }
   }

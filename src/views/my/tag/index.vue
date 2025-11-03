@@ -2,15 +2,22 @@
   <div class="tags-container">
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-        >
-          {{ showFilters ? T('HideFilters') : T('ShowFilters') }}
-        </el-button>
-      </div>
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    type="primary" 
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
 
       <el-form 
         v-show="!isMobile || showFilters"
@@ -25,8 +32,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="handlerQuery" :class="{ 'btn-block': isMobile }">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
+          <el-button type="primary" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -54,8 +60,8 @@
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center" />
         <el-table-column :label="T('Actions')" align="center">
           <template #default="{ row }">
-            <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+            <el-button :icon="Edit" type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button :icon="DeleteFilled" type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,8 +110,8 @@
         </div>
 
         <div class="card-actions">
-          <el-button @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
-          <el-button type="danger" @click="del(row)" size="small">{{ T('Delete') }}</el-button>
+          <el-button :icon="Edit" type="warning" @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
+          <el-button :icon="DeleteFilled" type="danger" @click="del(row)" size="small">{{ T('Delete') }}</el-button>
         </div>
       </el-card>
 
@@ -270,10 +276,16 @@ onMounted(async () => {
   .mobile-header {
     margin-bottom: 15px;
     
-    .filter-toggle {
-      width: 100%;
-      padding: 1.1rem;
+  .filter-toggle {
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 1.2rem;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {

@@ -1,12 +1,6 @@
 <template>
   <div class="token-management">
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown">
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
 
 
       <!-- Formulario de filtros -->
@@ -25,10 +19,6 @@
               :value="item.id"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item class="form-item-responsive">
-          <el-button type="primary" @click="handlerQuery">{{ T('Filter') }}</el-button>
-          <el-button type="danger" @click="toBatchDelete">{{ T('BatchDelete') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -66,7 +56,7 @@
         </el-table-column>
         <el-table-column :label="T('Actions')" align="center" width="400">
           <template #default="{ row }">
-            <el-button type="danger" @click="del(row)">{{ T('Logout') }}</el-button>
+            <el-button :icon="CircleCloseFilled" type="danger" @click="del(row)">{{ T('Logout') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -109,7 +99,7 @@
           </div>
           
           <div class="card-actions">
-            <el-button type="danger" @click="del(row)">
+            <el-button   :icon="CircleCloseFilled"  type="danger" @click="del(row)">
               {{ T('Logout') }}
             </el-button>
           </div>
@@ -141,7 +131,7 @@ import { computed, onActivated, onMounted, onUnmounted, ref, watch } from 'vue'
 import { loadAllUsers } from '@/global'
 import { useRepositories } from '@/views/user/token.js'
 import { T } from '@/utils/i18n'
-import {  ArrowDown,ArrowUp } from '@element-plus/icons-vue'
+import {  ArrowDown,ArrowUp, CircleCloseFilled, DeleteFilled, Edit, Hide, View} from '@element-plus/icons-vue'
 
 const { allUsers, getAllUsers } = loadAllUsers()
 getAllUsers()
@@ -155,11 +145,18 @@ const {
   batchDelete,
 } = useRepositories()
 
+
 onMounted(getList)
 onActivated(getList)
 
 watch(() => listQuery.page, getList)
 watch(() => listQuery.page_size, handlerQuery)
+watch(() => listQuery.user_id, () => {
+  listQuery.page = 1
+  getList()
+})
+
+
 
 const maskToken = (token) => {
   return token.slice(0, 4) + '****' + token.slice(-4)
@@ -193,7 +190,6 @@ const toBatchDelete = () => {
 }
 
 // Control de filtros móviles
-const showFilters = ref(false)
 const windowWidth = ref(window.innerWidth)
 
 const isMobile = computed(() => windowWidth.value <= 768)
@@ -227,7 +223,6 @@ onUnmounted(() => {
 }
 
 .list-query {
-  margin-bottom: 16px;
 
   // Header móvil
   .mobile-header {
@@ -235,7 +230,6 @@ onUnmounted(() => {
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    margin-bottom: 16px;
     border-bottom: 1px solid var(--el-border-color-light);
 
     .filter-info {
@@ -260,22 +254,16 @@ onUnmounted(() => {
         }
       }
     }
-
-    .filter-toggle-btn {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 16px;
-
-      .toggle-icon {
-        transition: transform 0.3s ease;
-        font-size: 14px;
-
-        &.rotate {
-          transform: rotate(180deg);
-        }
-      }
+  .filter-toggle {
+    width: 100%;
+    padding: 1.2rem;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
+  
   }
 
   .el-select {
@@ -283,14 +271,7 @@ onUnmounted(() => {
   }
 }
 
-// Ocultar filtros cuando está colapsado
-.hidden-filters {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: all 0.3s ease;
-  margin: 0 !important;
-}
+
 
 .query-form:not(.hidden-filters) {
   max-height: 500px;
@@ -326,7 +307,7 @@ onUnmounted(() => {
     margin-left: 0px !important;
     width: 100%;
     padding: 1.1rem;
-    font-size: 0.9rem;
+   font-size: 0.9rem !important;
   }
   
   .mobile-cards {

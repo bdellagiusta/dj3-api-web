@@ -2,28 +2,31 @@
   <div class="tags-admin-container">
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <el-button class="filter-toggle" type="primary" @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown">
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
-
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    color="#8B5CF6"
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
       <el-form v-show="!isMobile || showFilters" :inline="!isMobile" label-width="120px" class="filter-form">
         <el-form-item :label="T('Owner')" class="form-item-full">
           <el-select v-model="listQuery.user_id" clearable @change="changeUser">
             <el-option v-for="item in allUsers" :key="item.id" :label="item.username" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="T('AddressBookName')" class="form-item-full">
-          <el-select v-model="listQuery.collection_id" clearable>
-            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
-            <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
-          </el-select>
-        </el-form-item>
+
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="handlerQuery" :class="{ 'btn-block': isMobile }">{{ T('Filter') }} </el-button>
-          <el-button type="danger" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
+          <el-button :icon="CirclePlusFilled" type="primary" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -57,8 +60,8 @@
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center" />
         <el-table-column :label="T('Actions')" align="center" width="250">
           <template #default="{ row }">
-            <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+            <el-button :icon="Edit" type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button :icon="DeleteFilled" type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -117,8 +120,8 @@
         </div>
 
         <div class="card-actions">
-          <el-button type="warning" @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
-          <el-button type="danger" @click="del(row)" size="small">{{ T('Delete') }}</el-button>
+          <el-button :icon="Edit" type="warning" @click="toEdit(row)" size="small">{{ T('Edit') }}</el-button>
+          <el-button :icon="DeleteFilled" type="danger" @click="del(row)" size="small">{{ T('Delete') }}</el-button>
         </div>
       </el-card>
 
@@ -175,7 +178,7 @@ import { onMounted, watch, onActivated, ref } from 'vue'
 import { useRepositories } from '@/views/tag/index'
 import { T } from '@/utils/i18n'
 import { loadAllUsers } from '@/global'
-import { ArrowDown, ArrowUp, CopyDocument, Delete, Plus } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowUp, DeleteFilled, CirclePlusFilled, Edit, Hide, View } from '@element-plus/icons-vue'
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -268,18 +271,22 @@ watch(() => listQuery.page_size, handlerQuery)
   }
 
   .mobile-header {
-    margin-bottom: 15px;
 
-    .filter-toggle {
-      width: 100%;
-      padding: 1.2rem;
+  .filter-toggle {
+    width: 100%;
+    padding: 1.2rem;  
+    font-size:0.9rem;
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {
     .el-form-item {
       display: block;
-      margin-bottom: 15px;
+      margin: 15px 0;
       width: 100%;
 
       &.form-item-full {
@@ -290,11 +297,11 @@ watch(() => listQuery.page_size, handlerQuery)
       :deep(.el-form-item__label) {
         width: 100%;
         text-align: left;
-        margin-bottom: 5px;
       }
 
       :deep(.el-form-item__content) {
         margin-left: 0 !important;
+        margin-top: 1rem !important;
         width: 100%;
       }
     }
@@ -520,6 +527,7 @@ watch(() => listQuery.page_size, handlerQuery)
 @media (max-width: 768px) {
   :deep(.el-form-item__label) {
     width: auto !important;
+    margin-top: 1rem;
   }
 
   .dialog-form {
@@ -532,7 +540,6 @@ watch(() => listQuery.page_size, handlerQuery)
         width: 100% !important;
         text-align: left;
         padding: 0;
-        margin-bottom: 8px;
         display: block !important;
       }
 

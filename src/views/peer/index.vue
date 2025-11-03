@@ -2,16 +2,22 @@
 <div class="peer-container">
     <!-- Filter Card with Modern Design -->
     <el-card class="list-query" shadow="hover">
-      <div class="mobile-header" v-if="isMobile">
-        <el-button 
-          class="filter-toggle" 
-          type="primary" 
-          @click="showFilters = !showFilters"
-          :icon="showFilters ? ArrowUp : ArrowDown"
-        >
-          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-        </el-button>
-      </div>
+ <div class="mobile-header" v-if="isMobile">
+  <div class="filter-title">
+    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+  </div>
+  <el-button 
+    class="filter-toggle" 
+    color="#8B5CF6"
+    @click="showFilters = !showFilters"
+  >
+    <el-icon v-if="showFilters"><Hide /></el-icon>
+    <el-icon v-else><View /></el-icon>
+    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+    <el-icon v-else><ArrowDown /></el-icon>
+  </el-button>
+</div>
       
       <el-form 
         v-show="!isMobile || showFilters" 
@@ -27,11 +33,11 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <el-button type="success" @click="toAdd" class="btn-action">
+          <el-button type="primary" :icon="CirclePlusFilled" @click="toAdd" class="btn-action">
             {{ T('Add') }}
           </el-button>
           
-          <el-button type="danger" @click="toBatchDelete" class="btn-action" >
+          <el-button type="danger" :icon="DeleteFilled" @click="toBatchDelete" class="btn-action" >
             {{ T('BatchDelete') }}
           </el-button>
         </div>
@@ -80,12 +86,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="T('Actions')" align="center" width="500" class-name="table-actions" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" width="350" class-name="table-actions" fixed="right">
           <template #default="{ row }">
-            <el-button type="success" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
-            <el-button type="primary" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
-            <el-button type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
-            <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
+            <el-button type="success" :icon="Link" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
+            <!-- <el-button type="primary" :icon="Monitor" @click="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button> -->
+            <el-button type="warning" :icon="Edit"  @click="toEdit(row)">{{ T('Edit') }}</el-button>
+            <el-button type="danger" :icon="DeleteFilled" @click="del(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -151,10 +157,10 @@
         </div>
 
         <div class="card-actions">
-          <el-button size="small" type="success" @click.stop="connectByClient(row.id)">{{ T('Link') }}</el-button>
-          <el-button size="small" type="primary" @click.stop="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button>
-          <el-button size="small" type="warning" @click.stop="toEdit(row)">{{ T('Edit') }}</el-button>
-          <el-button size="small" type="danger" @click.stop="del(row)">{{ T('Delete') }}</el-button>
+          <el-button size="small" :icon="Link" type="success" @click.stop="connectByClient(row.id)">{{ T('Link') }}</el-button>
+          <!-- <el-button size="small" :icon="Monitor" type="primary" @click.stop="toAddressBook(row)">{{ T('AddToAddressBook') }}</el-button> -->
+          <el-button :icon="Edit" type="warning" @click.stop="toEdit(row)">{{ T('Edit') }}</el-button>
+          <el-button :icon="DeleteFilled" type="danger" @click.stop="del(row)">{{ T('Delete') }}</el-button>
         </div>
       </el-card>
 
@@ -244,7 +250,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { T } from '@/utils/i18n'
 import { timeAgo } from '@/utils/time'
 import { connectByClient } from '@/utils/peer'
-import { ArrowDown, ArrowUp, CopyDocument } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowUp, CopyDocument, DeleteFilled, CirclePlusFilled, Hide, RefreshLeft, View, Monitor, Link, Edit} from '@element-plus/icons-vue'
 import { handleClipboard } from '@/utils/clipboard'
 import createABForm from '@/views/peer/createABForm.vue'
 
@@ -471,18 +477,22 @@ const activeFiltersCount = computed(() => {
   }
 
   .mobile-header {
-    margin-bottom: 15px;
     
-    .filter-toggle {
-      width: 100%;
-      padding: 1.2rem;
+  .filter-toggle {
+    width: 100%;
+    padding: 1.2rem;
+    
+    :deep(.el-icon) {
+      margin-right: 8px;
+      margin-left: 8px;
     }
+  }
   }
 
   .filter-form {
     .el-form-item {
       display: block;
-      margin-bottom: 0px;
+      margin: 15px 0;
       
       &.form-item-full {
         width: 100%;
@@ -505,8 +515,8 @@ const activeFiltersCount = computed(() => {
 
     .el-button {
       width: 100%;
-      margin: 0;
-      padding: 1.2rem;
+      margin: 2px 0;
+      padding: 1.1rem;
     }
   }
 
@@ -644,9 +654,10 @@ const activeFiltersCount = computed(() => {
     }
   }
 
-  .card-actions {
-      display: flex;
-      flex-direction: column;
+
+   .card-actions {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     padding-top: 10px;
     border-top: 1px solid #ebeef5;
@@ -655,6 +666,15 @@ const activeFiltersCount = computed(() => {
       margin: 0;
       font-size: 0.9rem;
       padding: 1.2rem;
+      
+      &:nth-child(1) {
+        width: 100%;
+      }
+      
+      &:nth-child(2) {
+        flex: 1;
+        min-width: calc(50% - 5px);
+      }
       
       &:active {
         transform: scale(0.96);
