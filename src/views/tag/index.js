@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { create as admin_create, list as admin_list, remove as admin_remove, update as admin_update } from '@/api/tag'
 import { create as my_create, list as my_list, remove as my_remove, update as my_update } from '@/api/my/tag'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -24,6 +24,14 @@ export function useRepositories (api_type = 'my') {
     page_size: 10,
     user_id: user_id ? parseInt(user_id) : null,
     collection_id: null,
+  })
+
+  // Contador de filtros activos
+  const activeFiltersCount = computed(() => {
+    let count = 0
+    if (listQuery.user_id) count++
+    if (listQuery.collection_id) count++
+    return count
   })
 
   const flutterColor2rgba = (color) => {
@@ -124,8 +132,10 @@ export function useRepositories (api_type = 'my') {
     formData.color = row.color
     formData.user_id = row.user_id
     formData.collection_id = row.collection_id
-    collectionListQuery.user_id = row.user_id
-    getCollectionList()
+    currentColor.value = row.color
+    // Cargar las colecciones del usuario seleccionado
+    collectionListQueryForUpdate.user_id = row.user_id
+    getCollectionListForUpdate()
   }
   const toAdd = () => {
     formVisible.value = true
@@ -134,6 +144,9 @@ export function useRepositories (api_type = 'my') {
     formData.color = ''
     formData.user_id = null
     formData.collection_id = null
+    currentColor.value = ''
+    // Limpiar las colecciones
+    collectionListResForUpdate.list = []
   }
   const submit = async () => {
     console.log(formData)
@@ -155,39 +168,49 @@ export function useRepositories (api_type = 'my') {
     }
   }
 
-  //query form collection
+  // Query form collection - Para filtros
   const {
     listRes: collectionListRes,
     listQuery: collectionListQuery,
     getList: getCollectionList,
   } = useCollectionRepositories(api_type)
   collectionListQuery.page_size = 9999
+  
   const changeUser = async (val) => {
-    formData.collection_id = 0
+    listQuery.collection_id = null
     if (!val) {
       collectionListRes.list = []
     } else {
       collectionListQuery.user_id = val
-      getCollectionList()
+      await getCollectionList()
     }
+    // Aplicar el filtro automáticamente
+    handlerQuery()
   }
 
+  const changeCollection = async (val) => {
+    // Aplicar el filtro automáticamente cuando cambia la colección
+    handlerQuery()
+  }
+
+  // Create or update form collection - Para el formulario de edición/creación
   const {
     listRes: collectionListResForUpdate,
     listQuery: collectionListQueryForUpdate,
     getList: getCollectionListForUpdate,
   } = useCollectionRepositories(api_type)
   collectionListQueryForUpdate.page_size = 9999
-  //create or update form collection
+  
   const changeUserForUpdate = async (val) => {
-    listQuery.collection_id = null
+    formData.collection_id = null
     if (!val) {
-      collectionListRes.list = []
+      collectionListResForUpdate.list = [] // ✅ Corregido
     } else {
-      collectionListQuery.user_id = val
-      getCollectionListForUpdate()
+      collectionListQueryForUpdate.user_id = val // ✅ Corregido
+      await getCollectionListForUpdate()
     }
   }
+  
   return {
     listRes,
     listQuery,
@@ -201,14 +224,15 @@ export function useRepositories (api_type = 'my') {
     submit,
     activeChange,
     currentColor,
+    activeFiltersCount,
 
     collectionListRes,
     changeUser,
+    changeCollection,
     getCollectionList,
 
     collectionListResForUpdate,
     changeUserForUpdate,
     getCollectionListForUpdate,
-
   }
 }

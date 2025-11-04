@@ -2,22 +2,22 @@
   <div class="tags-container">
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
- <div class="mobile-header" v-if="isMobile">
-  <div class="filter-title">
-    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
-  </div>
-  <el-button 
-    class="filter-toggle" 
-    type="primary" 
-    @click="showFilters = !showFilters"
-  >
-    <el-icon v-if="showFilters"><Hide /></el-icon>
-    <el-icon v-else><View /></el-icon>
-    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
-    <el-icon v-else><ArrowDown /></el-icon>
-  </el-button>
-</div>
+      <div class="mobile-header" v-if="isMobile">
+        <div class="filter-title">
+          <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
+        </div>
+        <el-button 
+          class="filter-toggle" 
+          type="primary" 
+          @click="showFilters = !showFilters"
+        >
+          <el-icon v-if="showFilters"><Hide /></el-icon>
+          <el-icon v-else><View /></el-icon>
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+          <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+          <el-icon v-else><ArrowDown /></el-icon>
+        </el-button>
+      </div>
 
       <el-form 
         v-show="!isMobile || showFilters"
@@ -26,7 +26,11 @@
         class="filter-form"
       >
         <el-form-item :label="T('AddressBookName')" class="form-item-full">
-          <el-select v-model="listQuery.collection_id" clearable>
+          <el-select 
+            v-model="listQuery.collection_id" 
+            clearable
+            @change="handleFilterChange"
+          >
             <el-option :value="0" :label="T('MyAddressBook')"></el-option>
             <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
           </el-select>
@@ -43,7 +47,7 @@
         <el-table-column prop="id" label="ID" align="center" />
         <el-table-column prop="collection_id" :label="T('AddressBook')" align="center" width="150">
           <template #default="{ row }">
-            {{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}
+            {{collectionListRes.list.find(c => c.id === row.collection_id)?.name || T('MyAddressBook')}}
           </template>
         </el-table-column>
         <el-table-column prop="name" :label="T('Name')" align="center" />
@@ -174,7 +178,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, onActivated, ref } from 'vue'
+import { onMounted, watch, onActivated, ref, computed, onUnmounted } from 'vue'
 import { useRepositories } from '@/views/tag'
 import { T } from '@/utils/i18n'
 
@@ -191,6 +195,10 @@ const handleResize = () => {
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 const {
@@ -214,13 +222,36 @@ const {
   getCollectionListForUpdate,
 } = useRepositories('my')
 
+// Computed property for active filters count
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (listQuery.collection_id !== undefined && listQuery.collection_id !== null && listQuery.collection_id !== '') {
+    count++
+  }
+  return count
+})
+
+// Handle filter change - reset to page 1 and fetch data
+const handleFilterChange = () => {
+  listQuery.page = 1
+  getList()
+}
+
+// Initial data load
 onMounted(getList)
 onActivated(getList)
 
+// Watch for pagination changes
 watch(() => listQuery.page, getList)
+watch(() => listQuery.page_size, () => {
+  listQuery.page = 1
+  getList()
+})
 
-watch(() => listQuery.page_size, handlerQuery)
+// Watch for collection_id changes to apply filter automatically
+watch(() => listQuery.collection_id, handleFilterChange)
 
+// Load collection lists
 onMounted(getCollectionListForUpdate)
 onMounted(async () => {
   await getCollectionList()
@@ -276,16 +307,29 @@ onMounted(async () => {
   .mobile-header {
     margin-bottom: 15px;
     
-  .filter-toggle {
-    width: 100%;
-    margin-bottom: 2rem;
-    padding: 1.2rem;
-    
-    :deep(.el-icon) {
-      margin-right: 8px;
-      margin-left: 8px;
+    .filter-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+
+      .filter-badge {
+        :deep(.el-badge__content) {
+          font-size: 12px;
+        }
+      }
     }
-  }
+    
+    .filter-toggle {
+      width: 100%;
+      margin-bottom: 2rem;
+      padding: 1.2rem;
+      
+      :deep(.el-icon) {
+        margin-right: 8px;
+        margin-left: 8px;
+      }
+    }
   }
 
   .filter-form {

@@ -2,22 +2,21 @@
   <div class="tags-admin-container">
     <!-- Filter Card -->
     <el-card class="list-query" shadow="hover">
- <div class="mobile-header" v-if="isMobile">
-  <div class="filter-title">
-    <el-badge :value="activeFiltersCount" v-if="activeFiltersCount > 0" class="filter-badge" />
-  </div>
-  <el-button 
-    class="filter-toggle" 
-    color="#8B5CF6"
-    @click="showFilters = !showFilters"
-  >
-    <el-icon v-if="showFilters"><Hide /></el-icon>
-    <el-icon v-else><View /></el-icon>
-    {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
-    <el-icon v-if="showFilters"><ArrowUp /></el-icon>
-    <el-icon v-else><ArrowDown /></el-icon>
-  </el-button>
-</div>
+      <div class="mobile-header" v-if="isMobile">
+  
+        <el-button 
+          class="filter-toggle" 
+          color="#8B5CF6"
+          @click="showFilters = !showFilters"
+        >
+          <el-icon v-if="showFilters"><Hide /></el-icon>
+          <el-icon v-else><View /></el-icon>
+          {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
+          <el-icon v-if="showFilters"><ArrowUp /></el-icon>
+          <el-icon v-else><ArrowDown /></el-icon>
+        </el-button>
+      </div>
+      
       <el-form v-show="!isMobile || showFilters" :inline="!isMobile" label-width="120px" class="filter-form">
         <el-form-item :label="T('Owner')" class="form-item-full">
           <el-select v-model="listQuery.user_id" clearable @change="changeUser">
@@ -25,8 +24,17 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item :label="T('AddressBookName')" class="form-item-full">
+          <el-select v-model="listQuery.collection_id" clearable @change="changeCollection">
+            <el-option :value="0" :label="T('MyAddressBook')"></el-option>
+            <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item class="form-actions">
           <el-button :icon="CirclePlusFilled" type="primary" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
+            <el-button type="danger" :icon="RefreshLeft" @click="clearFilters" :class="isMobile ? 'mobile-clear-btn' : 'desktop-clear-btn'">{{ T('Clear Filters') }}</el-button>
+
         </el-form-item>
       </el-form>
     </el-card>
@@ -34,7 +42,8 @@
     <!-- Desktop Table View -->
     <el-card v-if="!isMobile" class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border>
-        <el-table-column prop="id" label="ID" align="center" />
+        <!-- <el-table-column prop="id" label="ID" align="center" /> -->
+        <el-table-column prop="name" :label="T('Name')" align="center" />
         <el-table-column :label="T('Owner')" align="center">
           <template #default="{ row }">
             <span v-if="row.user_id"> <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> </span>
@@ -46,7 +55,6 @@
             <span v-else>{{ row.collection?.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="name" :label="T('Name')" align="center" />
         <el-table-column prop="color" :label="T('Color')" align="center">
           <template #default="{ row }">
             <div class="colors">
@@ -178,7 +186,7 @@ import { onMounted, watch, onActivated, ref } from 'vue'
 import { useRepositories } from '@/views/tag/index'
 import { T } from '@/utils/i18n'
 import { loadAllUsers } from '@/global'
-import { ArrowDown, ArrowUp, DeleteFilled, CirclePlusFilled, Edit, Hide, View } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowUp, DeleteFilled, CirclePlusFilled, Edit, Hide, View, RefreshLeft, Link, CopyDocument  } from '@element-plus/icons-vue'
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -211,9 +219,11 @@ const {
   submit,
   activeChange,
   currentColor,
+  activeFiltersCount,
 
   collectionListRes,
   changeUser,
+  changeCollection,
 
   collectionListResForUpdate,
   changeUserForUpdate,
@@ -224,6 +234,15 @@ onActivated(getList)
 
 watch(() => listQuery.page, getList)
 watch(() => listQuery.page_size, handlerQuery)
+
+// Función para limpiar todos los filtros
+const clearFilters = () => {
+  listQuery.collection_id = null
+  listQuery.user_id = null
+  listQuery.page = 1
+  getList()
+}
+
 </script>
 
 <style scoped lang="scss">

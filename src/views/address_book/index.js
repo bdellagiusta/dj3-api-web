@@ -41,7 +41,8 @@ export function useRepositories(api_type = 'my') {
 
     const res = await apis[api_type].list({
       page: 1,
-      page_size: 9999
+      page_size: 9999,
+        collection_id: listQuery.collection_id || undefined  // 👈 añadir esta línea
     }).catch(_ => false)
 
     listRes.loading = false
@@ -91,6 +92,9 @@ export function useRepositories(api_type = 'my') {
           return itemCollection === collectionFilter
         })
       }
+
+
+
 
       if (listQuery.id && listQuery.id.trim() !== '') {
         const searchId = listQuery.id.toLowerCase().trim()

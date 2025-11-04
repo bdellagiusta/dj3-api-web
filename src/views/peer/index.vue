@@ -784,7 +784,7 @@ const activeFiltersCount = computed(() => {
 
 .dialog-form {
   .el-form-item {
-    margin-bottom: 10%;
+    margin-bottom: 16px;
     
     &:last-child {
       margin-bottom: 0;

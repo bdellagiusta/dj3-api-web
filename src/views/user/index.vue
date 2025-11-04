@@ -25,7 +25,7 @@
         </el-form-item>
         <el-form-item class="form-actions">
           <el-button :icon="CirclePlusFilled" type="primary" @click="toAdd" :class="{ 'btn-block': isMobile }">{{ T('Add') }}</el-button>
-          <el-button :icon="Upload" type="success" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button>
+          <!-- <el-button :icon="Upload" type="success" @click="toExport" :class="{ 'btn-block': isMobile }">{{ T('Export') }}</el-button> -->
         </el-form-item>
       </el-form>
     </el-card>
@@ -54,7 +54,8 @@
           <template #default="{ row }">
             <el-button :icon="Edit" type="warning" @click="toEdit(row)">{{ T('Edit') }}</el-button>
             <el-button :icon="Refresh" type="primary" @click="changePass(row)">{{ T('ResetPassword') }}</el-button>
-            <el-button :icon="DeleteFilled" type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>
+            <el-button   v-if="row.username !== 'admin'" 
+ :icon="DeleteFilled" type="danger" @click="remove(row)">{{ T('Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -116,7 +117,8 @@
           <el-button type="primary" :icon="Refresh" @click="changePass(row)" size="small" class="action-btn">
             {{ T('ResetPassword') }}
           </el-button>
-          <el-button type="danger"  :icon="DeleteFilled" @click="remove(row)" size="small" class="action-btn">
+          <el-button   v-if="row.username !== 'admin'" 
+ type="danger"  :icon="DeleteFilled" @click="remove(row)" size="small" class="action-btn">
             {{ T('Delete') }}
           </el-button>
         </div>
@@ -140,7 +142,7 @@ import { T } from '@/utils/i18n'
 import { DISABLE_STATUS, ENABLE_STATUS } from '@/utils/common_options'
 import { update } from '@/api/user'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, computed } from 'vue'
 import { CopyDocument, Avatar , Share, Upload, Delete, Plus, ArrowDown, ArrowUp, CirclePlusFilled, Edit, Refresh, DeleteFilled , Hide, View } from '@element-plus/icons-vue'
 
 // Mobile detection
@@ -210,6 +212,13 @@ const debouncedSearch = debounce(() => {
 watch(() => listQuery.username, () => {
   debouncedSearch()
 })
+
+const userInfo = computed(() => {
+  const userStr = localStorage.getItem('user_info')
+  return userStr ? JSON.parse(userStr) : null
+})
+
+const isAdmin = computed(() => userInfo.value?.name === 'admin')
 </script>
 
 <style scoped lang="scss">
