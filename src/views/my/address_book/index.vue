@@ -33,7 +33,7 @@ label-width="120px" :class="{ 'mobile-form': isMobile, 'hidden-filters': isMobil
         <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item :label="T('Group')">
+    <el-form-item v-if="!isHiperdino" :label="T('Group')">
       <el-select v-model="listQuery.collection_id" clearable @change="handlerQuery">
         <el-option :value="0" :label="T('MyAddressBook')" v-if="!isHiperdino"></el-option>
         <el-option v-for="c in collectionListRes.list" :key="c.id" :label="c.name" :value="c.id"></el-option>
