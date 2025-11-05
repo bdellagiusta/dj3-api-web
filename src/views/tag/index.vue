@@ -49,13 +49,13 @@
             <span v-if="row.user_id"> <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> </span>
           </template>
         </el-table-column>
-        <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center" width="150">
+        <el-table-column prop="collection_id" :label="T('AddressBookName')" align="center">
           <template #default="{ row }">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{ row.collection?.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="color" :label="T('Color')" align="center">
+        <el-table-column prop="color" :label="T('Color')" align="center" width="100">
           <template #default="{ row }">
             <div class="colors">
               <div style="background-color: var(--tag-bg-color)" class="colorbox">

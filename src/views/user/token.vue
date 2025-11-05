@@ -32,8 +32,7 @@
         @selection-change="handleSelectionChange"
         class="desktop-table"
       >
-        <el-table-column type="selection" align="center" width="50" />
-        <el-table-column prop="id" label="id" align="center" width="100" />
+        <!-- <el-table-column prop="id" label="id" align="center" width="100" /> -->
         <el-table-column :label="T('Owner')" align="center">
           <template #default="{ row }">
             <span v-if="row.user_id"> 

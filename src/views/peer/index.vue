@@ -36,10 +36,7 @@
           <el-button type="primary" :icon="CirclePlusFilled" @click="toAdd" class="btn-action">
             {{ T('Add') }}
           </el-button>
-          
-          <el-button type="danger" :icon="DeleteFilled" @click="toBatchDelete" class="btn-action" >
-            {{ T('BatchDelete') }}
-          </el-button>
+
         </div>
       </el-form>
     </el-card>
@@ -48,24 +45,24 @@
     <el-card v-if="!isMobile" class="list-body" shadow="hover">
       <el-table :data="listRes.list" v-loading="listRes.loading" border size="small"
         @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-                <el-table-column prop="alias" :label="T('Name')" align="center" width="100" show-overflow-tooltip />
-        <el-table-column prop="username" :label="T('Username')" align="center" width="120" />
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+                <el-table-column prop="alias" :label="T('Name')" align="center"  show-overflow-tooltip />
+        <el-table-column prop="username" :label="T('Username')" align="center"  />
 
-        <el-table-column prop="id" label="ID" align="center" width="150">
+        <el-table-column prop="id" label="ID" align="center">
           <template #default="{ row }">
             <span>{{ row.id }} <el-icon @click="handleClipboard(row.id, $event)"><CopyDocument /></el-icon></span>
           </template>
         </el-table-column>
 
         
-        <el-table-column prop="cpu" label="CPU" align="center" width="100" show-overflow-tooltip />
+        <!-- <el-table-column prop="cpu" label="CPU" align="center" width="100" show-overflow-tooltip /> -->
         
-        <el-table-column prop="memory" :label="T('Memory')" align="center" width="120" />
+        <!-- <el-table-column prop="memory" :label="T('Memory')" align="center" width="120" /> -->
         
-        <el-table-column prop="os" :label="T('Os')" align="center" width="120" show-overflow-tooltip />
+        <el-table-column prop="os" :label="T('Os')" align="center" width="200" show-overflow-tooltip />
         
-        <el-table-column prop="last_online_time" :label="T('LastOnlineTime')" align="center" min-width="120">
+        <el-table-column prop="last_online_time" :label="T('LastOnlineTime')" align="center">
           <template #default="{ row }">
             <div class="last_oline_time">
               <span>{{ row.last_online_time ? timeAgo(row.last_online_time * 1000) : '-' }}</span>
@@ -74,17 +71,17 @@
           </template>
         </el-table-column>
         
-        <el-table-column prop="last_online_ip" :label="T('LastOnlineIp')" align="center" min-width="120" />
+        <el-table-column prop="last_online_ip" :label="T('LastOnlineIp')" align="center" />
         
         
-        <el-table-column prop="group_id" :label="T('Group')" align="center" width="120">
+        <!-- <el-table-column prop="group_id" :label="T('Group')" align="center" width="120">
           <template #default="{ row }">
             <span v-if="row.group_id">
               <el-tag>{{ groupListRes.list?.find(g => g.id === row.group_id)?.name }}</el-tag>
             </span>
             <span v-else> - </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column :label="T('Actions')" align="center" width="350" class-name="table-actions" fixed="right">
           <template #default="{ row }">
@@ -130,14 +127,14 @@
             <span class="label">ID:</span>
             <span class="value">{{ row.id }}</span>
           </div>
-          <div class="info-row" v-if="row.cpu">
+          <!-- <div class="info-row" v-if="row.cpu">
             <span class="label">CPU:</span>
             <span class="value ellipsis">{{ row.cpu }}</span>
-          </div>
-          <div class="info-row" v-if="row.memory">
+          </div> -->
+          <!-- <div class="info-row" v-if="row.memory">
             <span class="label">{{ T('Memory') }}:</span>
             <span class="value">{{ row.memory }}</span>
-          </div>
+          </div> -->
           <div class="info-row" v-if="row.os">
             <span class="label">{{ T('Os') }}:</span>
             <span class="value ellipsis">{{ row.os }}</span>
@@ -150,10 +147,10 @@
             <span class="label">IP:</span>
             <span class="value">{{ row.last_online_ip }}</span>
           </div>
-          <div class="info-row" v-if="row.group_id">
+          <!-- <div class="info-row" v-if="row.group_id">
             <span class="label">{{ T('Group') }}:</span>
             <el-tag size="small">{{ groupListRes.list?.find(g => g.id === row.group_id)?.name }}</el-tag>
-          </div>
+          </div> -->
         </div>
 
         <div class="card-actions">
@@ -200,7 +197,7 @@
         <el-form-item :label="T('Name')" prop="alias">
           <el-input v-model="formData.alias"></el-input>
         </el-form-item>
-
+<!-- 
         <el-form-item :label="T('Group')" prop="group_id">
           <el-select v-model="formData.group_id" placeholder="Select group">
             <el-option
@@ -210,19 +207,19 @@
               :value="item.id"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item :label="T('Username')" prop="username">
           <el-input v-model="formData.username"></el-input>
         </el-form-item>
 
-        <el-form-item label="CPU" prop="cpu">
+        <!-- <el-form-item label="CPU" prop="cpu">
           <el-input v-model="formData.cpu"></el-input>
         </el-form-item>
 
         <el-form-item :label="T('Memory')" prop="memory">
           <el-input v-model="formData.memory"></el-input>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item :label="T('Os')" prop="os">
           <el-input v-model="formData.os"></el-input>

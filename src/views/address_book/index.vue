@@ -65,10 +65,10 @@
     <!-- Desktop Table View -->
     <el-card class="list-body desktop-view" shadow="hover" v-if="!isMobile">
       <el-table :data="listRes.list" v-loading="listRes.loading" border>
-        <el-table-column prop="alias" :label="T('Name')" align="center" />
+        <el-table-column prop="alias" :label="T('Name')" align="center"   width="320"/>
 
 
-        <el-table-column prop="id" label="ID" align="center" width="200">
+        <el-table-column prop="id" label="ID" align="center">
           <template #default="{ row }">
             <div>
               <PlatformIcons :name="platformList.find(p => p.label === row.platform)?.icon"
@@ -80,20 +80,20 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="collection_id" :label="T('Group')" align="center" width="150">
+        <el-table-column prop="collection_id" :label="T('Group')" align="center">
           <template #default="{ row }">
             <span v-if="row.collection_id === 0">{{ T('MyAddressBook') }}</span>
             <span v-else>{{collectionListRes.list.find(c => c.id === row.collection_id)?.name}}</span>
           </template>
         </el-table-column>
 
-        <el-table-column :label="T('Owner')" align="center" width="200">
+        <el-table-column :label="T('Owner')" align="center" >
           <template #default="{ row }">
             <span v-if="row.user_id"> <el-tag>{{allUsers?.find(u => u.id === row.user_id)?.username}}</el-tag> </span>
           </template>
         </el-table-column>
 
-        <el-table-column :label="T('Tags')" align="center" width="200">
+        <el-table-column :label="T('Tags')" align="center" >
           <template #default="{ row }">
             <div v-if="row.tags && row.tags.length"
               style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">
@@ -105,7 +105,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="400" fixed="right">
+        <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="360" fixed="right">
           <template #default="{ row }">
             <el-button type="success" :icon="Link" @click="connectByClient(row.id)">{{ T('Link') }}</el-button>
             <el-button type="warning" :icon="Edit" @click="toEdit(row)">{{ T('Edit') }}</el-button>
