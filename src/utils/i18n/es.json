@@ -561,5 +561,11 @@
   },
   "Add Group": {
     "One": "Agregar grupo"
+  },
+  "Enter your username": {
+    "One": "Ingrese su nombre de usuario"
+  },
+  "Enter your password": {
+    "One": "Ingrese su contraseña"
   }
 }

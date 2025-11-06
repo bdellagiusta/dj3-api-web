@@ -1,43 +1,87 @@
 <template>
   <div class="login-container">
+    <!-- Subtle background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
     <div class="login-card">
-      <img src="@/assets/logo.png" alt="logo" class="login-logo"/>
-        <div class="title">Dj3 Networks</div>
-                <div class="subtitle">DIGITAL SIGNAGE SERVICES & SOLUTIONS</div>
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <div class="logo-wrapper">
+          <img src="@/assets/logo.png" alt="logo" class="login-logo"/>
+        </div>
+        <h1 class="title">Dj3 Networks</h1>
+        <p class="subtitle">Digital Signage Services & Solutions</p>
+      </div>
 
+      <!-- Login Form -->
       <el-form v-if="!disablePwd" label-position="top" class="login-form">
-        <el-form-item :label="T('Username')">
-          <el-input v-model="form.username" type="username" class="login-input"></el-input>
-        </el-form-item>
-
-        <el-form-item :label="T('Password')">
-          <el-input v-model="form.password" type="password" @keyup.enter.native="login" show-password
-                    class="login-input"></el-input>
-        </el-form-item>
-        <el-form-item :label="T('Captcha')" v-if="captchaCode">
-          <el-input v-model="form.captcha" @keyup.enter.native="login"  class="login-input captcha-input">
-            <template #append>
-              <img :src="captchaCode.b64" @click="loadCaptcha" class="captcha" alt="captcha"/>
+        <el-form-item :label="T('Username')" class="form-item">
+          <el-input 
+            v-model="form.username" 
+            type="username" 
+            class="custom-input" 
+            :placeholder="T('Enter your username')"
+            size="large">
+            <template #prefix>
+              <i class="el-icon-user input-icon"></i>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="login" type="primary" class="login-button">{{ T('Login') }}</el-button>
-          <el-button v-if="allowRegister" @click="register" class="login-button">{{ T('Register') }}</el-button>
+
+        <el-form-item :label="T('Password')" class="form-item">
+          <el-input 
+            v-model="form.password" 
+            type="password" 
+            @keyup.enter.native="login" 
+            show-password
+            class="custom-input" 
+            :placeholder="T('Enter your password')"
+            size="large">
+            <template #prefix>
+              <i class="el-icon-lock input-icon"></i>
+            </template>
+          </el-input>
         </el-form-item>
-      </el-form>
 
-      <div class="divider" v-if="options.length > 0 && !disablePwd">
-        <span>{{ T('or login in with') }}</span>
-      </div>
+        <el-form-item :label="T('Captcha')" v-if="captchaCode" class="form-item">
+          <el-input 
+            v-model="form.captcha" 
+            @keyup.enter.native="login" 
+            class="custom-input captcha-input"
+            size="large">
+            <template #append>
+              <img :src="captchaCode.b64" @click="loadCaptcha" class="captcha-image" alt="captcha"/>
+            </template>
+          </el-input>
+        </el-form-item>
 
-      <div class="oidc-options">
-        <div v-for="(option, index) in options" :key="index" class="oidc-option">
-          <el-button @click="handleOIDCLogin(option.name)" class="oidc-btn">
-            <img :src="getProviderImage(option.name)" alt="provider" class="oidc-icon"/>
-            <span>{{ T(option.name) }}</span>
+        <div class="button-group">
+          <el-button @click="login" type="primary" class="primary-button" size="large">
+            {{ T('Login') }}
+          </el-button>
+          <el-button v-if="allowRegister" @click="register" class="secondary-button" size="large">
+            {{ T('Register') }}
           </el-button>
         </div>
+      </el-form>
+
+      <!-- Divider -->
+      <div class="divider" v-if="options.length > 0 && !disablePwd">
+        <span>{{ T('or continue with') }}</span>
+      </div>
+
+      <!-- OIDC Options -->
+      <div class="oidc-section" v-if="options.length > 0">
+        <el-button 
+          v-for="(option, index) in options" 
+          :key="index"
+          @click="handleOIDCLogin(option.name)" 
+          class="oidc-button"
+          size="large">
+          <img :src="getProviderImage(option.name)" alt="provider" class="provider-icon"/>
+          <span>{{ T(option.name) }}</span>
+        </el-button>
       </div>
     </div>
   </div>
@@ -93,7 +137,6 @@
       return
     }
     if (res.code === 110) {
-      // need captcha
       loadCaptcha()
     }
   }
@@ -119,7 +162,6 @@
     google: googleImage,
     github: githubImage,
     oidc: oidcImage,
-    // WebAuth: webauthImage,
     default: defaultImage,
   }
 
@@ -167,158 +209,351 @@
 </script>
 
 <style scoped lang="scss">
+// Minimal, professional animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Container
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #2d3a4b;
-  padding: 20px;
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  padding: 30px;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #1a242f;
   box-sizing: border-box;
 }
 
+.bg-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1e2732 0%, #2d3a4b 50%, #1a242f 100%);
+}
+
+.bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(233, 117, 22, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233, 117, 22, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+
+// Card
 .login-card {
-  width: 360px;
-  background-color: #283342;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.login-form {
-  margin-bottom: 20px;
-}
-
-.login-input {
   width: 100%;
-  .captcha{
-    cursor: pointer;
-    width: 150px;
+  max-width: 460px;
+  background: rgba(40, 51, 66, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 48px 44px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.5s ease-out;
+  
+
+}
+
+// Logo Section
+.logo-section {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 30px;
+}
+
+.logo-wrapper {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(233, 117, 22, 0.2));
+}
+
+.title { 
+  font-family: 'Century Gothic', 'Segoe UI', sans-serif; 
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 13px 0;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-family: 'Century Gothic', 'Segoe UI', sans-serif; 
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e97516;
+  margin: 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+// Form
+.login-form {
+  margin-bottom: 28px;
+}
+
+.form-item {
+  margin-bottom: 22px;
+  
+  ::v-deep(.el-form-item__label) {
+    color: #d1d5db;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
   }
 }
-.captcha-input{
-  :deep(.el-input-group__append) {
-    border-radius: 5px;
+
+.custom-input {
+  ::v-deep(.el-input__wrapper) {
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 8px 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.07);
+    }
+    
+    &.is-focus {
+      border-color: #e97516;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(233, 117, 22, 0.15);
+    }
+  }
+
+  ::v-deep(input) {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 400;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+  
+  .input-icon {
+    color: #e97516;
+    font-size: 15px;
+    margin-right: 2px;
+  }
+}
+
+.captcha-input {
+  ::v-deep(.el-input-group__append) {
+    border-radius: 0 10px 10px 0;
     padding: 0;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-left: none;
+  }
+  
+  .captcha-image {
+    cursor: pointer;
+    width: 120px;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 
-.login-button {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-  margin-left: 0;
+// Buttons
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
 }
 
+.primary-button {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(180deg, #e97516 0%, #d96b14 100%);
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: linear-gradient(180deg, #f57f1d 0%, #e97516 100%);
+    box-shadow: 0 8px 20px rgba(233, 117, 22, 0.4);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(233, 117, 22, 0.3);
+  }
+}
+
+.secondary-button {
+  width: 100%;
+  height: 52px;
+  background: transparent;
+  border: 1.5px solid rgba(233, 117, 22, 0.5);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #e97516;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(233, 117, 22, 0.1);
+    border-color: #e97516;
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Divider
 .divider {
   display: flex;
   align-items: center;
-  margin: 20px 0;
-  font-size: 14px;
-  color: #888;
+  margin: 32px 0 28px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
 
   &::before,
   &::after {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #ddd;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
   }
 
-  &::before {
-    margin-right: 10px;
-  }
-
-  &::after {
-    margin-left: 10px;
+  span {
+    padding: 0 16px;
   }
 }
 
-.oidc-options {
+// OIDC
+.oidc-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.oidc-btn {
+.oidc-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
-  height: 50px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  color: black;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.oidc-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-}
-
-.login-logo {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 20px;
-  display: block;
-}
-.title{ 
-  font-family:  'Century Gothic', sans-serif; 
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fff;
-  text-align: center;
-    margin-bottom: 5px;
-  user-select: none; /* Evita la selección de texto */
-  -webkit-user-select: none; /* Para navegadores WebKit */
-  -moz-user-select: none;    /* Para Firefox */
-  -ms-user-select: none;     /* Para IE/Edge */
-}
-.subtitle{
-  font-family:  'Century Gothic', sans-serif; 
-  font-size: 0.6rem;
-    font-weight: bold;
-
-  color: #e97516;
-  margin-bottom: 30px;
-  text-align: center;
-    user-select: none; /* Evita la selección de texto */
-  -webkit-user-select: none; /* Para navegadores WebKit */
-  -moz-user-select: none;    /* Para Firefox */
-  -ms-user-select: none;     /* Para IE/Edge */
-}
-
-.el-form-item {
-  ::v-deep(.el-form-item__label) {
-    color: #fff;
-        user-select: none; /* Evita la selección de texto */
-  -webkit-user-select: none; /* Para navegadores WebKit */
-  -moz-user-select: none;    /* Para Firefox */
-  -ms-user-select: none;     /* Para IE/Edge */
+  height: 52px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #1a202c;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #ffffff;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
   }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
 
-  .el-input {
-    ::v-deep(.el-input__wrapper) {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: transparent;
-    }
+.provider-icon {
+  width: 20px;
+  height: 20px;
+}
 
-    ::v-deep(input) {
-      color: #fff;
-    }
+// Responsive
+@media (max-width: 768px) {
+  .login-container {
+    padding: 20px;
+  }
+  
+  .login-card {
+    padding: 40px 32px;
+  }
+  
+  .logo-section {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+  }
+  
+  .login-logo {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 0.7rem;
+  }
+  
+  .primary-button,
+  .secondary-button,
+  .oidc-button {
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 36px 28px;
+  }
+  
+  .logo-section {
+    margin-bottom: 32px;
+  }
+  
+  .title {
+    font-size: 2rem;
   }
 }
 </style>
