@@ -13,7 +13,7 @@
     @click="showFilters = !showFilters"
   >
     <el-icon v-if="showFilters"><Hide /></el-icon>
-    <el-icon v-else><View /></el-icon>
+    <el-icon v-else><View /></el-icon> 
     {{ showFilters ? T('Hide Filters') : T('Show Filters') }}
     <el-icon v-if="showFilters"><ArrowUp /></el-icon>
     <el-icon v-else><ArrowDown /></el-icon>
@@ -374,29 +374,28 @@ const clearFilters = () => {
 // Centrar formulario de filtros
 .list-query {
   :deep(.el-form) {
-    &.centered-form {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 
-      .el-form-item {
-        margin-top: 16px;
-      }
-
-      .form-actions {
-        margin-right: 0;
-      }
-
-      .form-actions-mobile {
-        width: 100%;
-        margin-right: 0;
-      }
-      
+    .el-form-item {
+      margin-right: 10px;
+      margin-bottom: 10px;
     }
-      &.hidden-filters {
-    display: none;
-  }
+
+    .form-actions {
+      margin-right: 0;
+      
+      .desktop-clear-btn {
+        margin-left: 5.2rem !important;
+      }
+    }
+
+    &.hidden-filters {
+      display: none;
+    }
   }
 }
 
@@ -617,9 +616,7 @@ const clearFilters = () => {
     }
   }
 }
-.desktop-clear-btn {
- margin-left: 5rem;
-}
+
 .list-query {
   margin-bottom: 16px;
 
@@ -669,4 +666,9 @@ const clearFilters = () => {
               margin-left:0 !important;
     
             }
+.desktop-clear-btn {
+ margin-left: 5rem !important;
+ ;
+}
+
 </style>
